@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Checklist</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 50px;
+        }
+
+        .checklist-container {
+            width: 350px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-text {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+            outline: none;
+            cursor: pointer;
+            flex-grow: 1;
+        }
+
+        .three-state-button {
+            display: flex;
+            border-radius: 50px;
+            border: 1px solid #ddd;
+            width: 60px;
+            height: 25px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .three-state-button .button-overlay {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            transition: background-color 0.3s;
+        }
+
+        .three-state-button.checked .button-overlay {
+            background-color: #2ecc71;
+        }
+        
+        .three-state-button.unchecked .button-overlay {
+            background-color: #e74c3c;
+        }
+
+        .three-state-button .icon {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #666;
+            z-index: 2;
+        }
+        
+        .three-state-button.checked .icon-cross {
+            opacity: 0;
+        }
+        .three-state-button.unchecked .icon-check {
+            opacity: 0;
+        }
+        .three-state-button.checked .icon-check,
+        .three-state-button.unchecked .icon-cross {
+            color: white;
+        }
+        
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: color 0.2s;
+            padding: 0 5px;
+            line-height: 1;
+            height: 25px;
+            display: flex;
+            align-items: center;
+        }
+        .delete-btn:hover {
+            color: #c0392b;
+        }
+        
+        .summary-container {
+            width: 350px;
+            margin-top: 100px;
+            margin-left: 100px;
+        }
+        
+        #summary-text {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 1em;
+            resize: vertical;
+        }
+        #copy-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #34495e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        #copy-btn:hover {
+            background-color: #2c3e50;
+        }
+        
+        #add-row-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        #add-row-btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="checklist-container">
+        <div style="text-align: center; font-size: 1.5em; font-weight: bold; padding-bottom: 10px; border-bottom: 2px solid #000; margin-bottom: 10px;">
+            CHECK LIST
+        </div>
+
+        <div id="checklist-items">
+            <div class="checklist-item">
+                <span class="item-text" contenteditable="true">MACRO</span>
+                <div class="three-state-button" data-state="neutral">
+                    <div class="icon icon-cross">×</div>
+                    <div class="icon icon-check">✓</div>
+                    <div class="button-overlay"></div>
+                </div>
+                <button class="delete-btn">×</button>
+            </div>
+            <div class="checklist-item">
+                <span class="item-text" contenteditable="true">NEWS</span>
+                <div class="three-state-button" data-state="neutral">
+                    <div class="icon icon-cross">×</div>
+                    <div class="icon icon-check">✓</div>
+                    <div class="button-overlay"></div>
+                </div>
+                <button class="delete-btn">×</button>
+            </div>
+            <div class="checklist-item">
+                <span class="item-text" contenteditable="true">LEVELS</span>
+                <div class="three-state-button" data-state="neutral">
+                    <div class="icon icon-cross">×</div>
+                    <div class="icon icon-check">✓</div>
+                    <div class="button-overlay"></div>
+                </div>
+                <button class="delete-btn">×</button>
+            </div>
+            <div class="checklist-item">
+                <span class="item-text" contenteditable="true">TREND</span>
+                <div class="three-state-button" data-state="neutral">
+                    <div class="icon icon-cross">×</div>
+                    <div class="icon icon-check">✓</div>
+                    <div class="button-overlay"></div>
+                </div>
+                <button class="delete-btn">×</button>
+            </div>
+            <div class="checklist-item">
+                <span class="item-text" contenteditable="true">VOLUME/CVD</span>
+                <div class="three-state-button" data-state="neutral">
+                    <div class="icon icon-cross">×</div>
+                    <div class="icon icon-check">✓</div>
+                    <div class="button-overlay"></div>
+                </div>
+                <button class="delete-btn">×</button>
+            </div>
+            <div class="checklist-item">
+                <span class="item-text" contenteditable="true">MOMENTUM</span>
+                <div class="three-state-button" data-state="neutral">
+                    <div class="icon icon-cross">×</div>
+                    <div class="icon icon-check">✓</div>
+                    <div class="button-overlay"></div>
+                </div>
+                <button class="delete-btn">×</button>
+            </div>
+            <div class="checklist-item">
+                <span class="item-text" contenteditable="true">PLAN/SETUP</span>
+                <div class="three-state-button" data-state="neutral">
+                    <div class="icon icon-cross">×</div>
+                    <div class="icon icon-check">✓</div>
+                    <div class="button-overlay"></div>
+                </div>
+                <button class="delete-btn">×</button>
+            </div>
+            <div class="checklist-item">
+                <span class="item-text" contenteditable="true">WAIT</span>
+                <div class="three-state-button" data-state="neutral">
+                    <div class="icon icon-cross">×</div>
+                    <div class="icon icon-check">✓</div>
+                    <div class="button-overlay"></div>
+                </div>
+                <button class="delete-btn">×</button>
+            </div>
+            <div class="checklist-item">
+                <span class="item-text" contenteditable="true">EXECUTE</span>
+                <div class="three-state-button" data-state="neutral">
+                    <div class="icon icon-cross">×</div>
+                    <div class="icon icon-check">✓</div>
+                    <div class="button-overlay"></div>
+                </div>
+                <button class="delete-btn">×</button>
+            </div>
+            <div class="checklist-item">
+                <span class="item-text" contenteditable="true">JOURNAL</span>
+                <div class="three-state-button" data-state="neutral">
+                    <div class="icon icon-cross">×</div>
+                    <div class="icon icon-check">✓</div>
+                    <div class="button-overlay"></div>
+                </div>
+                <button class="delete-btn">×</button>
+            </div>
+        </div>
+
+        <button id="add-row-btn">+ Add New Item</button>
+    </div>
+
+    <div class="summary-container">
+        <textarea id="summary-text" readonly></textarea>
+        <button id="copy-btn">Copy!</button>
+    </div>
+</div>
+
+<script>
+    function handleButtonClick(event) {
+        const button = event.currentTarget;
+        const currentState = button.dataset.state;
+
+        const rect = button.getBoundingClientRect();
+        const clickX = event.clientX - rect.left;
+        const middle = rect.width / 2;
+
+        if (currentState === 'neutral') {
+            if (clickX > middle) {
+                button.classList.add('checked');
+                button.dataset.state = 'checked';
+            } else {
+                button.classList.add('unchecked');
+                button.dataset.state = 'unchecked';
+            }
+        } else {
+            button.classList.remove('checked', 'unchecked');
+            button.dataset.state = 'neutral';
+        }
+        updateSummaryText();
+    }
+
+    function createNewRow() {
+        const newItem = document.createElement('div');
+        newItem.className = 'checklist-item';
+        newItem.innerHTML = `
+            <span class="item-text" contenteditable="true">New Item</span>
+            <div class="three-state-button" data-state="neutral">
+                <div class="icon icon-cross">×</div>
+                <div class="icon icon-check">✓</div>
+                <div class="button-overlay"></div>
+            </div>
+            <button class="delete-btn">×</button>
+        `;
+
+        const checklistItems = document.getElementById('checklist-items');
+        checklistItems.appendChild(newItem);
+
+        const newThreeStateButton = newItem.querySelector('.three-state-button');
+        newThreeStateButton.addEventListener('click', handleButtonClick);
+
+        const newDeleteButton = newItem.querySelector('.delete-btn');
+        newDeleteButton.addEventListener('click', handleDeleteClick);
+
+        updateSummaryText();
+    }
+    
+    function handleDeleteClick(event) {
+        const confirmDelete = confirm("Are you sure you want to delete this item?");
+        
+        if (confirmDelete) {
+            const deleteBtn = event.currentTarget;
+            const itemToRemove = deleteBtn.closest('.checklist-item');
+            if (itemToRemove) {
+                itemToRemove.remove();
+            }
+        }
+        updateSummaryText();
+    }
+    
+    function updateSummaryText() {
+        const summaryTextarea = document.getElementById('summary-text');
+        const listItems = document.querySelectorAll('.checklist-item');
+        let summaryContent = "";
+
+        listItems.forEach(item => {
+            const text = item.querySelector('.item-text').textContent;
+            const state = item.querySelector('.three-state-button').dataset.state;
+            let value = "";
+
+            if (state === 'checked') {
+                value = "Yes";
+            } else if (state === 'unchecked') {
+                value = "No";
+            }
+            
+            summaryContent += `${text}: ${value}\n`;
+        });
+        
+        summaryTextarea.value = summaryContent;
+    }
+
+    function copyToClipboard() {
+        const summaryTextarea = document.getElementById('summary-text');
+        const listContent = summaryTextarea.value;
+        
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hour = String(now.getHours()).padStart(2, '0');
+        const minute = String(now.getMinutes()).padStart(2, '0');
+        const second = String(now.getSeconds()).padStart(2, '0');
+        
+        const formattedDateTime = `${year}.${month}.${day} ${hour}:${minute}:${second}`;
+        
+        const fullContent = `${listContent}\n${formattedDateTime}`;
+
+        navigator.clipboard.writeText(fullContent);
+        alert("Text copied to clipboard!");
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const existingThreeStateButtons = document.querySelectorAll('.three-state-button');
+        existingThreeStateButtons.forEach(button => {
+            button.addEventListener('click', handleButtonClick);
+        });
+
+        const existingDeleteButtons = document.querySelectorAll('.delete-btn');
+        existingDeleteButtons.forEach(button => {
+            button.addEventListener('click', handleDeleteClick);
+        });
+
+        const addRowBtn = document.getElementById('add-row-btn');
+        addRowBtn.addEventListener('click', createNewRow);
+        
+        const copyBtn = document.getElementById('copy-btn');
+        copyBtn.addEventListener('click', copyToClipboard);
+
+        updateSummaryText();
+    });
+</script>
+
+</body>
+</html>
