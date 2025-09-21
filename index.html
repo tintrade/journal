@@ -52,6 +52,7 @@
             flex-grow: 1;
         }
 
+        /* Yes/No Button styles (existing) */
         .three-state-button {
             display: flex;
             border-radius: 50px;
@@ -74,13 +75,8 @@
             transition: background-color 0.3s;
         }
 
-        .three-state-button.checked .button-overlay {
-            background-color: #2ecc71;
-        }
-        
-        .three-state-button.unchecked .button-overlay {
-            background-color: #e74c3c;
-        }
+        .three-state-button.checked .button-overlay { background-color: #2ecc71; }
+        .three-state-button.unchecked .button-overlay { background-color: #e74c3c; }
 
         .three-state-button .icon {
             flex: 1;
@@ -93,15 +89,22 @@
             z-index: 2;
         }
         
-        .three-state-button.checked .icon-cross {
-            opacity: 0;
-        }
-        .three-state-button.unchecked .icon-check {
-            opacity: 0;
-        }
+        .three-state-button.checked .icon-cross { opacity: 0; }
+        .three-state-button.unchecked .icon-check { opacity: 0; }
         .three-state-button.checked .icon-check,
-        .three-state-button.unchecked .icon-cross {
-            color: white;
+        .three-state-button.unchecked .icon-cross { color: white; }
+
+        /* Dropdown style */
+        .dropdown {
+            margin-right: 10px;
+            height: 25px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 1em;
+            cursor: pointer;
+            outline: none;
+            padding: 0 5px;
+            color: #333;
         }
         
         .delete-btn {
@@ -151,14 +154,17 @@
             font-weight: bold;
             transition: background-color 0.2s;
         }
-        #copy-btn:hover {
-            background-color: #2c3e50;
-        }
+        #copy-btn:hover { background-color: #2c3e50; }
         
-        #add-row-btn {
-            width: 100%;
-            padding: 10px;
+        .add-row-buttons {
+            display: flex;
+            justify-content: space-between;
             margin-top: 15px;
+        }
+
+        .add-row-buttons button {
+            flex: 1;
+            padding: 10px;
             background-color: #3498db;
             color: white;
             border: none;
@@ -167,12 +173,13 @@
             font-size: 1em;
             font-weight: bold;
             transition: background-color 0.2s;
+            margin-right: 10px;
         }
-        #add-row-btn:hover {
-            background-color: #2980b9;
+        .add-row-buttons button:last-child {
+            margin-right: 0;
         }
+        .add-row-buttons button:hover { background-color: #2980b9; }
 
-        /* --- MOBİL UYUM İÇİN YENİ KOD --- */
         @media (max-width: 800px) {
             .main-container {
                 flex-direction: column;
@@ -187,6 +194,15 @@
 
             .checklist-container, .summary-container {
                 width: 90%;
+            }
+
+            .add-row-buttons {
+                flex-direction: column;
+            }
+
+            .add-row-buttons button {
+                margin-right: 0;
+                margin-bottom: 10px;
             }
         }
     </style>
@@ -292,7 +308,10 @@
             </div>
         </div>
 
-        <button id="add-row-btn">+ Add New Item</button>
+        <div class="add-row-buttons">
+            <button id="add-yn-btn">+ Add Yes/No Item</button>
+            <button id="add-dd-btn">+ Add Dropdown Item</button>
+        </div>
     </div>
 
     <div class="summary-container">
@@ -302,14 +321,13 @@
 </div>
 
 <script>
+    // Dinamik satırlara tıklama olaylarını yöneten fonksiyon
     function handleButtonClick(event) {
         const button = event.currentTarget;
         const currentState = button.dataset.state;
-
         const rect = button.getBoundingClientRect();
         const clickX = event.clientX - rect.left;
         const middle = rect.width / 2;
-
         if (currentState === 'neutral') {
             if (clickX > middle) {
                 button.classList.add('checked');
@@ -325,11 +343,12 @@
         updateSummaryText();
     }
 
-    function createNewRow() {
+    // Yes/No satırı oluşturan fonksiyon
+    function createYNRow() {
         const newItem = document.createElement('div');
         newItem.className = 'checklist-item';
         newItem.innerHTML = `
-            <span class="item-text" contenteditable="true">New Item</span>
+            <span class="item-text" contenteditable="true">New Yes/No Item</span>
             <div class="three-state-button" data-state="neutral">
                 <div class="icon icon-cross">×</div>
                 <div class="icon icon-check">✓</div>
@@ -337,22 +356,47 @@
             </div>
             <button class="delete-btn">×</button>
         `;
-
         const checklistItems = document.getElementById('checklist-items');
         checklistItems.appendChild(newItem);
-
         const newThreeStateButton = newItem.querySelector('.three-state-button');
         newThreeStateButton.addEventListener('click', handleButtonClick);
-
         const newDeleteButton = newItem.querySelector('.delete-btn');
         newDeleteButton.addEventListener('click', handleDeleteClick);
+        updateSummaryText();
+    }
 
+    // Dropdown satırı oluşturan fonksiyon
+    function createDDRow() {
+        const newItem = document.createElement('div');
+        newItem.className = 'checklist-item';
+        newItem.innerHTML = `
+            <span class="item-text" contenteditable="true">New Dropdown Item</span>
+            <select class="dropdown" onchange="updateSummaryText()">
+                <option value=""></option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select>
+            <button class="delete-btn">×</button>
+        `;
+        const checklistItems = document.getElementById('checklist-items');
+        checklistItems.appendChild(newItem);
+        const newDeleteButton = newItem.querySelector('.delete-btn');
+        newDeleteButton.addEventListener('click', handleDeleteClick);
         updateSummaryText();
     }
     
+    // Onaylı silme işlemini yöneten fonksiyon
     function handleDeleteClick(event) {
         const confirmDelete = confirm("Are you sure you want to delete this item?");
-        
         if (confirmDelete) {
             const deleteBtn = event.currentTarget;
             const itemToRemove = deleteBtn.closest('.checklist-item');
@@ -363,28 +407,33 @@
         updateSummaryText();
     }
     
+    // Özet metin kutusunu güncelleyen ana fonksiyon
     function updateSummaryText() {
         const summaryTextarea = document.getElementById('summary-text');
         const listItems = document.querySelectorAll('.checklist-item');
         let summaryContent = "";
-
         listItems.forEach(item => {
             const text = item.querySelector('.item-text').textContent;
-            const state = item.querySelector('.three-state-button').dataset.state;
             let value = "";
+            
+            // Satır türüne göre değeri al
+            const yesNoButton = item.querySelector('.three-state-button');
+            const dropdown = item.querySelector('.dropdown');
 
-            if (state === 'checked') {
-                value = "Yes";
-            } else if (state === 'unchecked') {
-                value = "No";
+            if (yesNoButton) {
+                const state = yesNoButton.dataset.state;
+                if (state === 'checked') { value = "Yes"; }
+                else if (state === 'unchecked') { value = "No"; }
+            } else if (dropdown) {
+                value = dropdown.value;
             }
             
             summaryContent += `${text}: ${value}\n`;
         });
-        
         summaryTextarea.value = summaryContent;
     }
 
+    // Metin kutusunu panoya kopyalayan fonksiyon
     function copyToClipboard() {
         const summaryTextarea = document.getElementById('summary-text');
         const listContent = summaryTextarea.value;
@@ -406,18 +455,30 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+        // Yes/No butonlarına olay dinleyicisi ekle
         const existingThreeStateButtons = document.querySelectorAll('.three-state-button');
         existingThreeStateButtons.forEach(button => {
             button.addEventListener('click', handleButtonClick);
         });
 
+        // Dropdown menülere olay dinleyicisi ekle
+        const existingDropdowns = document.querySelectorAll('.dropdown');
+        existingDropdowns.forEach(dropdown => {
+            dropdown.addEventListener('change', updateSummaryText);
+        });
+
+        // Silme butonlarına olay dinleyicisi ekle
         const existingDeleteButtons = document.querySelectorAll('.delete-btn');
         existingDeleteButtons.forEach(button => {
             button.addEventListener('click', handleDeleteClick);
         });
 
-        const addRowBtn = document.getElementById('add-row-btn');
-        addRowBtn.addEventListener('click', createNewRow);
+        // Yeni satır ekleme butonlarına olay dinleyicisi ekle
+        const addYNBtn = document.getElementById('add-yn-btn');
+        addYNBtn.addEventListener('click', createYNRow);
+        
+        const addDDBtn = document.getElementById('add-dd-btn');
+        addDDBtn.addEventListener('click', createDDRow);
         
         const copyBtn = document.getElementById('copy-btn');
         copyBtn.addEventListener('click', copyToClipboard);
