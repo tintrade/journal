@@ -171,6 +171,24 @@
         #add-row-btn:hover {
             background-color: #2980b9;
         }
+
+        /* --- MOBİL UYUM İÇİN YENİ KOD --- */
+        @media (max-width: 800px) {
+            .main-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .summary-container {
+                margin-top: 0;
+                margin-left: 0;
+            }
+
+            .checklist-container, .summary-container {
+                width: 90%;
+            }
+        }
     </style>
 </head>
 <body>
