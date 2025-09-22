@@ -194,13 +194,17 @@
         }
         
         .three-state-button[data-type="yn"].checked .icon-cross,
-        .three-state-button[data-type="pn"].checked .icon-minus { opacity: 0; }
+        .three-state-button[data-type="pn"].checked .icon-minus,
+        .three-state-button[data-type="ls"].checked .icon-short { opacity: 0; }
+
         .three-state-button[data-type="yn"].unchecked .icon-check,
-        .three-state-button[data-type="pn"].unchecked .icon-plus { opacity: 0; }
+        .three-state-button[data-type="pn"].unchecked .icon-plus,
+        .three-state-button[data-type="ls"].unchecked .icon-long { opacity: 0; }
+
         .three-state-button.checked .icon,
         .three-state-button.unchecked .icon { color: white; }
         
-        .dropdown, .char-input, #comments-input {
+        .dropdown, .char-input, #comments-input, .money-input, .leverage-input {
             margin-right: 10px;
             height: 25px;
             border-radius: 5px;
@@ -211,14 +215,35 @@
             padding: 0 5px;
             background-color: var(--input-bg-color);
             color: var(--text-color);
+            box-sizing: border-box;
         }
 
-        .char-input {
-            width: 80px;
-            box-sizing: border-box;
+        .char-input, .leverage-input {
             text-align: center;
         }
+        .char-input { width: 80px; }
+        .leverage-input { width: 45px; }
         
+        .money-input-container {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-right: 10px;
+        }
+
+        .money-input-container span {
+            color: var(--text-color);
+            font-weight: bold;
+        }
+
+        .money-input {
+            text-align: right;
+            margin-right: 0;
+        }
+
+        .money-input.dollars { width: 80px; }
+        .money-input.cents { width: 35px; }
+
         .delete-btn {
             background: none;
             border: none;
@@ -246,7 +271,6 @@
             width: 100%;
             height: 150px;
             padding: 10px;
-            box-sizing: border-box;
             border: 1px solid var(--border-color);
             border-radius: 5px;
             font-family: monospace;
@@ -278,7 +302,6 @@
         #comments-input {
             width: 100%;
             height: auto;
-            box-sizing: border-box;
             font-family: inherit;
             padding: 8px;
             resize: vertical;
@@ -412,30 +435,33 @@
                 <button class="delete-btn">×</button>
             </div>
             <div class="checklist-item">
+                <span class="item-text" contenteditable="true">Long/Short</span>
+                <div class="three-state-button" data-type="ls" data-state="neutral">
+                    <div class="icon icon-short">S</div>
+                    <div class="icon icon-long">L</div>
+                    <div class="button-overlay"></div>
+                </div>
+            </div>
+            <div class="checklist-item">
+                <span class="item-text" contenteditable="true">Margin in USD</span>
+                <div class="money-input-container">
+                    <input type="text" class="money-input dollars" placeholder="0" maxlength="7" oninput="validateNumericInput(this); updateSummaryText();">
+                    <span>,</span>
+                    <input type="text" class="money-input cents" placeholder="00" maxlength="2" oninput="validateNumericInput(this); updateSummaryText();">
+                </div>
+            </div>
+            <div class="checklist-item">
+                <span class="item-text" contenteditable="true">Leverage</span>
+                <input type="text" class="leverage-input" maxlength="3" oninput="validateNumericInput(this); updateSummaryText();">
+                <button class="delete-btn">×</button>
+            </div>
+            <div class="checklist-item">
                 <span class="item-text" contenteditable="true">Sleep quality</span>
                 <select class="dropdown" data-type="dd" onchange="updateSummaryText()">
                     <option value=""></option>
-                    <option value="-10">-10</option>
-                    <option value="-9">-9</option>
-                    <option value="-8">-8</option>
-                    <option value="-7">-7</option>
-                    <option value="-6">-6</option>
-                    <option value="-5">-5</option>
-                    <option value="-4">-4</option>
-                    <option value="-3">-3</option>
-                    <option value="-2">-2</option>
-                    <option value="-1">-1</option>
+                    <option value="-10">-10</option><option value="-9">-9</option><option value="-8">-8</option><option value="-7">-7</option><option value="-6">-6</option><option value="-5">-5</option><option value="-4">-4</option><option value="-3">-3</option><option value="-2">-2</option><option value="-1">-1</option>
                     <option value="0">0</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
+                    <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
                 </select>
                 <button class="delete-btn">×</button>
             </div>
@@ -443,27 +469,9 @@
                 <span class="item-text" contenteditable="true">Mood</span>
                 <select class="dropdown" data-type="dd" onchange="updateSummaryText()">
                     <option value=""></option>
-                    <option value="-10">-10</option>
-                    <option value="-9">-9</option>
-                    <option value="-8">-8</option>
-                    <option value="-7">-7</option>
-                    <option value="-6">-6</option>
-                    <option value="-5">-5</option>
-                    <option value="-4">-4</option>
-                    <option value="-3">-3</option>
-                    <option value="-2">-2</option>
-                    <option value="-1">-1</option>
+                    <option value="-10">-10</option><option value="-9">-9</option><option value="-8">-8</option><option value="-7">-7</option><option value="-6">-6</option><option value="-5">-5</option><option value="-4">-4</option><option value="-3">-3</option><option value="-2">-2</option><option value="-1">-1</option>
                     <option value="0">0</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
+                    <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
                 </select>
                 <button class="delete-btn">×</button>
             </div>
@@ -488,14 +496,16 @@
 </div>
 
 <script>
-    // Functions remain the same until DOMContentLoaded
+    function validateNumericInput(input) {
+        input.value = input.value.replace(/[^0-9]/g, '');
+    }
+
     function handleButtonClick(event) {
         const button = event.currentTarget;
         const currentState = button.dataset.state;
         const rect = button.getBoundingClientRect();
         const clickX = event.clientX - rect.left;
         const middle = rect.width / 2;
-
         if (currentState === 'neutral') {
             if (clickX > middle) {
                 button.classList.add('checked');
@@ -604,10 +614,18 @@
             const itemButton = item.querySelector('.three-state-button');
             const dropdown = item.querySelector('.dropdown');
             const charInput = item.querySelector('.char-input');
+            const dollarsInput = item.querySelector('.money-input.dollars');
+            const centsInput = item.querySelector('.money-input.cents');
+            const leverageInput = item.querySelector('.leverage-input');
+
             if (itemButton && itemButton.dataset.type === 'yn') {
                 const state = itemButton.dataset.state;
                 if (state === 'checked') { value = "Yes"; }
                 else if (state === 'unchecked') { value = "No"; }
+            } else if (itemButton && itemButton.dataset.type === 'ls') {
+                const state = itemButton.dataset.state;
+                if (state === 'checked') { value = "Long"; }
+                else if (state === 'unchecked') { value = "Short"; }
             } else if (dropdown) {
                 value = dropdown.value;
             } else if (itemButton && itemButton.dataset.type === 'pn') {
@@ -616,6 +634,15 @@
                 else if (state === 'unchecked') { value = "-"; }
             } else if (charInput) {
                 value = charInput.value;
+            } else if (dollarsInput && centsInput) {
+                if (dollarsInput.value || centsInput.value) {
+                    const dollars = dollarsInput.value || '0';
+                    const cents = centsInput.value.padStart(2, '0');
+                    const formattedDollars = Number(dollars).toLocaleString('en-US');
+                    value = `${formattedDollars}.${cents} USD`;
+                }
+            } else if (leverageInput) {
+                value = leverageInput.value;
             }
             summaryContent += `${text}: ${value}\n`;
         });
@@ -624,6 +651,7 @@
     
     function copyToClipboard() {
         const listContent = document.getElementById('summary-text').value;
+        const commentsText = document.getElementById('comments-input').value.trim();
         const now = new Date();
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -632,17 +660,33 @@
         const minute = String(now.getMinutes()).padStart(2, '0');
         const second = String(now.getSeconds()).padStart(2, '0');
         const formattedDateTime = `${year}.${month}.${day} ${hour}:${minute}:${second}`;
-        let fullContent = `${listContent}\n${formattedDateTime}`;
-        const commentsText = document.getElementById('comments-input').value.trim();
-        if (commentsText) {
-            fullContent += `\n\nComments:\n${commentsText}`;
+        const headerLines = [
+            "Trade No:",
+            `Position opening: ${formattedDateTime}`,
+            "Position closing:",
+            "Profit amount in USD:",
+            "Margin-based profit percentage:",
+            "Loss amount in USD:",
+            "Margin-based loss percentage:"
+        ];
+        let finalContentArray = [...headerLines];
+        if (listContent.trim()) {
+            finalContentArray.push('');
+            finalContentArray.push(listContent.trim());
         }
+        
+        finalContentArray.push('');
+        finalContentArray.push('Comments:');
+        if (commentsText) {
+            finalContentArray.push(commentsText);
+        }
+
+        const fullContent = finalContentArray.join('\n');
         navigator.clipboard.writeText(fullContent);
         alert("Text copied to clipboard!");
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        // Theme switcher logic
         const themeToggle = document.getElementById('theme-toggle');
         const body = document.body;
         themeToggle.addEventListener('change', () => {
@@ -658,8 +702,6 @@
             body.classList.add('dark-mode');
             themeToggle.checked = true;
         }
-
-        // Existing event listeners
         document.querySelectorAll('.three-state-button').forEach(button => button.addEventListener('click', handleButtonClick));
         document.querySelectorAll('.dropdown').forEach(dropdown => dropdown.addEventListener('change', updateSummaryText));
         document.querySelectorAll('.char-input').forEach(input => input.addEventListener('input', updateSummaryText));
@@ -669,7 +711,7 @@
         document.getElementById('add-pn-btn').addEventListener('click', createPNRow);
         document.getElementById('add-7char-btn').addEventListener('click', create7CharRow);
         document.getElementById('copy-btn').addEventListener('click', copyToClipboard);
-
+        document.querySelectorAll('.money-input, .leverage-input').forEach(input => input.addEventListener('input', () => validateNumericInput(input)));
         updateSummaryText();
     });
 </script>
