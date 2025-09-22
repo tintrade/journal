@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trading Journal Entry</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
             --bg-color: #f0f0f0;
@@ -324,11 +325,12 @@
             align-items: center;
             justify-content: center;
             font-size: 0.9em;
+            text-align: center;
         }
         .template-row button:hover, .template-row .file-upload-label:hover { background-color: var(--action-btn-hover-bg); }
         #delete-template-btn { background-color: var(--delete-action-btn-bg); }
         #delete-template-btn:hover { background-color: var(--delete-action-btn-hover-bg); }
-        #upload-template-input, #merge-txt-input { display: none; }
+        #upload-template-input, #merge-txt-input, #merge-pdf-input { display: none; }
         .full-width-label {
             width: 100%;
         }
@@ -388,6 +390,10 @@
             <div class="template-row">
                 <label for="merge-txt-input" class="file-upload-label full-width-label">Merge multiple .txt files</label>
                 <input type="file" id="merge-txt-input" accept=".txt" multiple>
+            </div>
+             <div class="template-row">
+                <label for="merge-pdf-input" class="file-upload-label full-width-label">Merge multiple .txt files into a single pdf</label>
+                <input type="file" id="merge-pdf-input" accept=".txt" multiple>
             </div>
         </div>
     </div>
@@ -618,7 +624,6 @@
         for (const file of files) {
             try {
                 const text = await readFileAsText(file);
-                // Add filename as a header for each section
                 allContent.push(`====================\nFILE: ${file.name}\n====================\n\n${text}`);
             } catch (err) {
                 console.error("Error reading file:", file.name, err);
@@ -638,7 +643,54 @@
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
 
-        event.target.value = ''; // Reset file input
+        event.target.value = '';
+    }
+
+    async function mergeTxtFilesAsPdf(event) {
+        const files = event.target.files;
+        if (!files.length) return;
+
+        const label = document.querySelector('label[for="merge-pdf-input"]');
+        const originalText = label.textContent;
+        label.textContent = 'Generating PDF...';
+
+        try {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+            const margin = 15;
+            const maxWidth = doc.internal.pageSize.getWidth() - margin * 2;
+            let y = margin;
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const text = await readFileAsText(file);
+
+                if (i > 0) {
+                    doc.addPage();
+                    y = margin;
+                }
+                
+                doc.setFontSize(12);
+                doc.setFont('helvetica', 'bold');
+                doc.text(`File: ${file.name}`, margin, y);
+                y += 10;
+                
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                const textLines = doc.splitTextToSize(text, maxWidth);
+                
+                doc.text(textLines, margin, y);
+            }
+            
+            doc.save('Merged_Files.pdf');
+
+        } catch (err) {
+            console.error("Error generating PDF:", err);
+            alert("Could not generate PDF. See console for details.");
+        } finally {
+            label.textContent = originalText;
+            event.target.value = ''; // Reset file input
+        }
     }
     
     function getFilenameTimestamp() {
@@ -819,6 +871,8 @@
         document.getElementById('download-template-btn').addEventListener('click', downloadTemplate);
         document.getElementById('upload-template-input').addEventListener('change', uploadTemplate);
         document.getElementById('merge-txt-input').addEventListener('change', mergeTxtFiles);
+        document.getElementById('merge-pdf-input').addEventListener('change', mergeTxtFilesAsPdf);
+
 
         // Summary action buttons
         document.getElementById('copy-btn').addEventListener('click', copyToClipboard);
