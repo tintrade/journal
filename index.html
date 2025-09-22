@@ -60,25 +60,21 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
             background-color: var(--bg-color);
             padding: 20px;
             box-sizing: border-box;
             transition: background-color 0.3s;
         }
 
-        .main-container {
+        .app-container {
             display: flex;
-            justify-content: center;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
             align-items: flex-start;
-            gap: 50px;
         }
-
-        .checklist-container {
-            width: 350px;
+        
+        .panel {
             background-color: var(--container-bg);
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -86,6 +82,23 @@
             transition: background-color 0.3s;
         }
         
+        .content-column {
+            flex: 2;
+        }
+
+        .sidebar-column {
+            flex: 1;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .sidebar-section {
+            margin-bottom: 25px;
+        }
+        .sidebar-section:last-child {
+            margin-bottom: 0;
+        }
+
         .header {
             display: flex;
             justify-content: space-between;
@@ -246,20 +259,18 @@
         }
         .delete-btn:hover { color: var(--delete-btn-hover-color); }
         
-        .summary-container { width: 350px; margin-top: 100px; margin-left: 100px; }
-        
         #summary-text {
             width: 100%; height: 150px; padding: 10px;
             border: 1px solid var(--border-color); border-radius: 5px;
             font-family: monospace; font-size: 1em; resize: vertical;
             background-color: var(--input-bg-color); color: var(--text-color);
+            margin-top: 20px;
         }
 
         .summary-actions {
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin-top: 10px;
         }
 
         .summary-actions button {
@@ -276,31 +287,28 @@
         }
         .summary-actions button:hover { background-color: var(--copy-btn-hover-bg); }
         
-        .comments-container { padding-top: 10px; border-top: 1px solid var(--border-color); }
+        .comments-container { padding-top: 10px; }
         #comments-input {
             width: 100%; height: auto; font-family: inherit; padding: 8px;
             resize: vertical; margin-right: 0;
         }
         
-        .add-row-buttons { display: flex; justify-content: space-between; margin-top: 15px; flex-wrap: wrap; }
-        .add-row-buttons button {
-            flex: 1; padding: 10px; background-color: var(--button-bg); color: var(--button-text-color);
-            border: none; border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: bold;
-            transition: background-color 0.2s; margin-right: 10px; margin-bottom: 10px; min-width: 100px;
-        }
-        .add-row-buttons button:last-child { margin-right: 0; }
-        .add-row-buttons button:hover { background-color: var(--button-hover-bg); }
-
-        .template-management-container {
-            border-top: 2px solid var(--border-color);
-            margin-top: 20px;
-            padding-top: 15px;
-        }
-        .template-management-container h3 {
-            margin: 0 0 10px 0;
+        .sidebar-section h3 {
+             margin: 0 0 10px 0;
             color: var(--text-color);
             font-size: 1.1em;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border-color);
         }
+
+        .add-row-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .add-row-buttons button {
+            padding: 10px; background-color: var(--button-bg); color: var(--button-text-color);
+            border: none; border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        .add-row-buttons button:hover { background-color: var(--button-hover-bg); }
+
         .template-row {
             display: flex;
             margin-bottom: 10px;
@@ -335,43 +343,54 @@
             width: 100%;
         }
 
-
-        @media (max-width: 800px) {
-            .main-container { flex-direction: column; align-items: center; gap: 20px; }
-            .summary-container { margin-top: 0; margin-left: 0; }
-            .checklist-container, .summary-container { width: 90%; }
-            .add-row-buttons { flex-direction: column; }
-            .add-row-buttons button { margin-right: 0; }
+        @media (max-width: 900px) {
+            .app-container { flex-direction: column; }
+            .sidebar-column { position: static; top: 0; width: 100%; }
         }
     </style>
 </head>
 <body>
 
-<div class="main-container">
-    <div class="checklist-container">
-        <div class="header">
-            <span class="title-text">TRADING JOURNAL ENTRY</span>
-            <label class="theme-switch">
-                <input type="checkbox" id="theme-toggle">
-                <span class="slider"></span>
-            </label>
-        </div>
-
-        <div id="checklist-items">
+<div class="app-container">
+    <div class="content-column panel">
+        <div id="capture-area">
+            <div class="header">
+                <span class="title-text">TRADING JOURNAL ENTRY</span>
+                <label class="theme-switch">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider"></span>
+                </label>
             </div>
+            <div id="checklist-items">
+                </div>
+            <div class="comments-container">
+                <textarea id="comments-input" placeholder="Comments..." maxlength="1000" rows="3"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar-column">
+        <div class="panel sidebar-section">
+            <h3>Summary & Actions</h3>
+            <textarea id="summary-text" readonly></textarea>
+            <div class="summary-actions">
+                <button id="copy-btn">Copy!</button>
+                <button id="download-txt-btn">Download as .txt</button>
+                <button id="download-png-btn">Download as .png image</button>
+            </div>
+        </div>
         
-        <div class="comments-container">
-            <textarea id="comments-input" placeholder="Comments..." maxlength="1000" rows="3"></textarea>
+        <div class="panel sidebar-section">
+            <h3>Add Items</h3>
+            <div class="add-row-buttons">
+                <button id="add-yn-btn">Yes/No Item</button>
+                <button id="add-dd-btn">Dropdown Item</button>
+                <button id="add-pn-btn">-/+ Item</button>
+                <button id="add-7char-btn">7 Char Item</button>
+            </div>
         </div>
 
-        <div class="add-row-buttons">
-            <button id="add-yn-btn">Add Yes/No Item</button>
-            <button id="add-dd-btn">Add Dropdown Item</button>
-            <button id="add-pn-btn">Add -/+ Item</button>
-            <button id="add-7char-btn">Add 7 Char Item</button>
-        </div>
-
-        <div class="template-management-container">
+        <div class="panel sidebar-section">
             <h3>Template Management</h3>
             <div class="template-row">
                 <input type="text" id="template-name-input" placeholder="Enter template name...">
@@ -382,7 +401,7 @@
                 <button id="load-template-btn">Load</button>
                 <button id="delete-template-btn">Delete</button>
             </div>
-             <div class="template-row">
+            <div class="template-row">
                 <button id="download-template-btn">Download</button>
                 <label for="upload-template-input" class="file-upload-label">Load from File</label>
                 <input type="file" id="upload-template-input" accept=".json">
@@ -395,15 +414,6 @@
                 <label for="merge-pdf-input" class="file-upload-label full-width-label">Merge multiple .txt files into a single pdf</label>
                 <input type="file" id="merge-pdf-input" accept=".txt" multiple>
             </div>
-        </div>
-    </div>
-
-    <div class="summary-container">
-        <textarea id="summary-text" readonly></textarea>
-        <div class="summary-actions">
-            <button id="copy-btn">Copy!</button>
-            <button id="download-txt-btn">Download as .txt</button>
-            <button id="download-png-btn">Download as .png image</button>
         </div>
     </div>
 </div>
@@ -642,7 +652,6 @@
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-
         event.target.value = '';
     }
 
@@ -659,16 +668,12 @@
             const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
             const margin = 15;
             const maxWidth = doc.internal.pageSize.getWidth() - margin * 2;
-            let y = margin;
-
+            
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 const text = await readFileAsText(file);
-
-                if (i > 0) {
-                    doc.addPage();
-                    y = margin;
-                }
+                if (i > 0) { doc.addPage(); }
+                let y = margin;
                 
                 doc.setFontSize(12);
                 doc.setFont('helvetica', 'bold');
@@ -678,18 +683,15 @@
                 doc.setFontSize(10);
                 doc.setFont('helvetica', 'normal');
                 const textLines = doc.splitTextToSize(text, maxWidth);
-                
                 doc.text(textLines, margin, y);
             }
-            
             doc.save('Merged_Files.pdf');
-
         } catch (err) {
             console.error("Error generating PDF:", err);
             alert("Could not generate PDF. See console for details.");
         } finally {
             label.textContent = originalText;
-            event.target.value = ''; // Reset file input
+            event.target.value = '';
         }
     }
     
@@ -752,9 +754,7 @@
 
     async function downloadEntryAsPng() {
         const button = document.getElementById('download-png-btn');
-        const elementToCapture = document.querySelector('.checklist-container');
-        const addButtons = document.querySelector('.add-row-buttons');
-        const templateManagement = document.querySelector('.template-management-container');
+        const elementToCapture = document.getElementById('capture-area');
         const filenameTimestamp = getFilenameTimestamp();
         const activeTemplateName = localStorage.getItem('active_template');
         let filename = `Trade ${filenameTimestamp}.png`;
@@ -766,9 +766,6 @@
         button.disabled = true;
 
         try {
-            addButtons.style.display = 'none';
-            templateManagement.style.display = 'none';
-
             const canvas = await html2canvas(elementToCapture, {
                 useCORS: true,
                 backgroundColor: getComputedStyle(document.body).getPropertyValue('--bg-color')
@@ -784,8 +781,6 @@
             console.error('Error generating image:', error);
             alert('Could not generate image. See console for details.');
         } finally {
-            addButtons.style.display = '';
-            templateManagement.style.display = '';
             button.textContent = 'Download as .png image';
             button.disabled = false;
         }
@@ -872,7 +867,6 @@
         document.getElementById('upload-template-input').addEventListener('change', uploadTemplate);
         document.getElementById('merge-txt-input').addEventListener('change', mergeTxtFiles);
         document.getElementById('merge-pdf-input').addEventListener('change', mergeTxtFilesAsPdf);
-
 
         // Summary action buttons
         document.getElementById('copy-btn').addEventListener('click', copyToClipboard);
