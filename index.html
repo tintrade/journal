@@ -6,31 +6,33 @@
     <title>Trading Journal Entry</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
         :root {
-            --bg-color: #f0f0f0;
-            --container-bg: #ffffff;
-            --text-color: #333;
-            --secondary-text-color: #666;
-            --border-color: #ddd;
-            --header-border-color: #000;
-            --button-bg: #3498db;
-            --button-text-color: white;
-            --button-hover-bg: #2980b9;
-            --copy-btn-bg: #34495e;
-            --copy-btn-hover-bg: #2c3e50;
-            --action-btn-bg: #2ecc71;
-            --action-btn-hover-bg: #27ae60;
-            --delete-action-btn-bg: #e74c3c;
-            --delete-action-btn-hover-bg: #c0392b;
-            --switch-track-bg: #ccc;
+            --bg-color: #fcf5ee;
+            --container-bg: #f9ede0;
+            --text-color: #3e250b;
+            --secondary-text-color: #7d4916;
+            --border-color: #eec8a2;
+            --header-border-color: #9f5e1c;
+            --button-bg: #df974e;
+            --button-text-color: #fcf5ee;
+            --button-hover-bg: #c27223;
+            --copy-btn-bg: #5a3510;
+            --copy-btn-hover-bg: #301d09;
+            --action-btn-bg: #d77e26;
+            --action-btn-hover-bg: #bb6e21;
+            --delete-action-btn-bg: #91561a;
+            --delete-action-btn-hover-bg: #683d13;
+            --switch-track-bg: #e19b55;
             --checked-state-color: #2ecc71;
             --unchecked-state-color: #e74c3c;
-            --neutral-btn-border: #ddd;
-            --icon-color: #666;
-            --delete-btn-color: #888;
-            --delete-btn-hover-color: #555;
-            --input-bg-color: #ffffff;
+            --neutral-btn-border: #eec8a2;
+            --icon-color: #7d4916;
+            --delete-btn-color: #8a5219;
+            --delete-btn-hover-color: #5a3510;
+            --input-bg-color: #fbf1e7;
+            --ghost-bg-color: rgba(215, 126, 38, 0.3);
         }
 
         body.dark-mode {
@@ -49,13 +51,14 @@
             --delete-action-btn-bg: #e74c3c;
             --delete-action-btn-hover-bg: #c0392b;
             --switch-track-bg: #566573;
-            --checked-state-color: #27ae60;
-            --unchecked-state-color: #c0392b;
+            --checked-state-color: #2ecc71;
+            --unchecked-state-color: #e74c3c;
             --neutral-btn-border: #566573;
             --icon-color: #bdc3c7;
             --delete-btn-color: #95a5a6;
             --delete-btn-hover-color: #ecf0f1;
             --input-bg-color: #2c3e50;
+            --ghost-bg-color: rgba(26, 188, 156, 0.3);
         }
 
         body {
@@ -93,7 +96,7 @@
         }
         
         .sidebar-section {
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
         .sidebar-section:last-child {
             margin-bottom: 0;
@@ -156,9 +159,14 @@
             justify-content: space-between;
             padding: 12px 0;
             border-bottom: 1px solid var(--border-color);
+            cursor: grab;
         }
-
         .checklist-item:last-child { border-bottom: none; }
+        
+        .sortable-ghost {
+            opacity: 0.4;
+            background-color: var(--ghost-bg-color);
+        }
 
         .item-text {
             font-size: 1.1em;
@@ -264,7 +272,6 @@
             border: 1px solid var(--border-color); border-radius: 5px;
             font-family: monospace; font-size: 1em; resize: vertical;
             background-color: var(--input-bg-color); color: var(--text-color);
-            margin-top: 20px;
         }
 
         .summary-actions {
@@ -311,13 +318,36 @@
             resize: vertical; margin-right: 0;
         }
         
-        .sidebar-section h3 {
-             margin: 0 0 10px 0;
+        .collapsible-header {
+            margin: 0;
+            padding: 0 0 10px 0;
             color: var(--text-color);
             font-size: 1.1em;
-            padding-bottom: 5px;
             border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+        .collapse-icon {
+            font-size: 1.5em;
+            font-weight: bold;
+            transition: transform 0.3s ease-in-out;
+        }
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+            padding-top: 0;
+        }
+        .sidebar-section.active .collapsible-content {
+            max-height: 1000px; /* Large enough value */
+            padding-top: 15px;
+        }
+        .sidebar-section.active .collapse-icon {
+            transform: rotate(45deg);
+        }
+
 
         .add-row-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .add-row-buttons button {
@@ -332,6 +362,7 @@
             margin-bottom: 10px;
             gap: 10px;
         }
+        .template-row:last-child { margin-bottom: 0; }
         .template-row input, .template-row select {
             flex: 1;
             margin-right: 0;
@@ -492,49 +523,64 @@
     </div>
 
     <div class="sidebar-column">
-        <div class="panel sidebar-section">
-            <h3>Summary & Actions</h3>
-            <textarea id="summary-text" readonly></textarea>
-            <div class="summary-actions">
-                <button id="copy-btn"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Copy!</button>
-                <button id="download-txt-btn"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>Download as .txt</button>
-                <button id="download-png-btn"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>Download as .png</button>
+        <div class="panel sidebar-section active">
+             <h3 class="collapsible-header">
+                <span>Summary & Actions</span>
+                <span class="collapse-icon">+</span>
+            </h3>
+            <div class="collapsible-content">
+                <textarea id="summary-text" readonly></textarea>
+                <div class="summary-actions">
+                    <button id="copy-btn"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Copy!</button>
+                    <button id="download-txt-btn"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>Download as .txt</button>
+                    <button id="download-png-btn"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>Download as .png</button>
+                </div>
             </div>
         </div>
         
         <div class="panel sidebar-section">
-            <h3>Add Items</h3>
-            <div class="add-row-buttons">
-                <button id="add-yn-btn"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>Yes/No</button>
-                <button id="add-dd-btn"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>Dropdown</button>
-                <button id="add-pn-btn"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>-/+</button>
-                <button id="add-7char-btn"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>7 Char</button>
+            <h3 class="collapsible-header">
+                <span>Add Items</span>
+                <span class="collapse-icon">+</span>
+            </h3>
+            <div class="collapsible-content">
+                <div class="add-row-buttons">
+                    <button id="add-yn-btn"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>Yes/No</button>
+                    <button id="add-dd-btn"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>Dropdown</button>
+                    <button id="add-pn-btn"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>-/+</button>
+                    <button id="add-7char-btn"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>7 Char</button>
+                </div>
             </div>
         </div>
 
         <div class="panel sidebar-section">
-            <h3>Template Management</h3>
-            <div class="template-row">
-                <input type="text" id="template-name-input" placeholder="Enter template name...">
-                <button id="save-template-btn"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>Save</button>
-            </div>
-            <div class="template-row">
-                <select id="template-select"></select>
-                <button id="load-template-btn"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path><line x1="20" y1="12" x2="4" y2="12"></line></svg>Load</button>
-                <button id="delete-template-btn"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>Delete</button>
-            </div>
-             <div class="template-row">
-                <button id="download-template-btn"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>Download</button>
-                <label for="upload-template-input" class="file-upload-label"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 14 12 9 7 14"></polyline><line x1="12" y1="9" x2="12" y2="21"></line></svg>Load from File</label>
-                <input type="file" id="upload-template-input" accept=".json">
-            </div>
-            <div class="template-row">
-                <label for="merge-txt-input" class="file-upload-label full-width-label"><svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>Merge .txt files</label>
-                <input type="file" id="merge-txt-input" accept=".txt" multiple>
-            </div>
-             <div class="template-row">
-                <label for="merge-pdf-input" class="file-upload-label full-width-label"><svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>Merge to .pdf</label>
-                <input type="file" id="merge-pdf-input" accept=".txt" multiple>
+            <h3 class="collapsible-header">
+                <span>Template Management</span>
+                <span class="collapse-icon">+</span>
+            </h3>
+            <div class="collapsible-content">
+                <div class="template-row">
+                    <input type="text" id="template-name-input" placeholder="Enter template name...">
+                    <button id="save-template-btn"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>Save</button>
+                </div>
+                <div class="template-row">
+                    <select id="template-select"></select>
+                    <button id="load-template-btn"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path><line x1="20" y1="12" x2="4" y2="12"></line></svg>Load</button>
+                    <button id="delete-template-btn"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>Delete</button>
+                </div>
+                 <div class="template-row">
+                    <button id="download-template-btn"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>Download</button>
+                    <label for="upload-template-input" class="file-upload-label"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 14 12 9 7 14"></polyline><line x1="12" y1="9" x2="12" y2="21"></line></svg>Load from File</label>
+                    <input type="file" id="upload-template-input" accept=".json">
+                </div>
+                <div class="template-row">
+                    <label for="merge-txt-input" class="file-upload-label full-width-label"><svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>Merge .txt files</label>
+                    <input type="file" id="merge-txt-input" accept=".txt" multiple>
+                </div>
+                 <div class="template-row">
+                    <label for="merge-pdf-input" class="file-upload-label full-width-label"><svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>Merge to .pdf</label>
+                    <input type="file" id="merge-pdf-input" accept=".txt" multiple>
+                </div>
             </div>
         </div>
     </div>
@@ -555,7 +601,7 @@
 </div>
 
 <script>
-    // All JS functions remain here. To save space, the full script is omitted in this display but is included in the actual code.
+    // All JS functions remain here.
     const defaultTemplate = [
         { text: "Macro Market", type: "pn", deletable: true }, { text: "News", type: "pn", deletable: true },
         { text: "Levels", type: "yn", deletable: true }, { text: "Trend", type: "yn", deletable: true },
@@ -629,12 +675,8 @@
             confirmBtn.onclick = () => resolvePromise(input.value.trim());
             cancelBtn.onclick = () => resolvePromise(null);
             input.onkeydown = (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    confirmBtn.click();
-                } else if (e.key === 'Escape') {
-                    cancelBtn.click();
-                }
+                if (e.key === 'Enter') { e.preventDefault(); confirmBtn.click(); } 
+                else if (e.key === 'Escape') { cancelBtn.click(); }
             };
         });
     }
@@ -650,13 +692,8 @@
         const clickX = event.clientX - rect.left;
         const middle = rect.width / 2;
         if (currentState === 'neutral') {
-            if (clickX > middle) {
-                button.classList.add('checked');
-                button.dataset.state = 'checked';
-            } else {
-                button.classList.add('unchecked');
-                button.dataset.state = 'unchecked';
-            }
+            if (clickX > middle) { button.classList.add('checked'); button.dataset.state = 'checked'; } 
+            else { button.classList.add('unchecked'); button.dataset.state = 'unchecked'; }
         } else {
             button.classList.remove('checked', 'unchecked');
             button.dataset.state = 'neutral';
@@ -678,7 +715,6 @@
         const { text, type, deletable } = itemData;
         const newItem = document.createElement('div');
         newItem.className = 'checklist-item';
-        
         let controlHtml = '';
         switch(type) {
             case 'yn': controlHtml = `<div class="three-state-button" data-type="yn" data-state="neutral"><div class="icon icon-cross">×</div><div class="icon icon-check">✓</div><div class="button-overlay"></div></div>`; break;
@@ -689,14 +725,11 @@
             case 'money': controlHtml = `<div class="money-input-container"><input type="text" class="money-input dollars" placeholder="0" maxlength="7" oninput="validateNumericInput(this); updateSummaryText();"><span>,</span><input type="text" class="money-input cents" placeholder="00" maxlength="2" oninput="validateNumericInput(this); updateSummaryText();"></div>`; break;
             case 'leverage': controlHtml = `<input type="text" class="leverage-input" maxlength="3" oninput="validateNumericInput(this); updateSummaryText();">`; break;
         }
-
         const deleteButtonHtml = deletable ? `<button class="delete-btn">×</button>` : '';
         newItem.innerHTML = `<span class="item-text" contenteditable="true">${text}</span>${controlHtml}${deleteButtonHtml}`;
         document.getElementById('checklist-items').appendChild(newItem);
-
         const button = newItem.querySelector('.three-state-button');
         if (button) button.addEventListener('click', handleButtonClick);
-        
         const deleteBtn = newItem.querySelector('.delete-btn');
         if (deleteBtn) deleteBtn.addEventListener('click', handleDeleteClick);
     }
@@ -714,19 +747,16 @@
             const text = item.querySelector('.item-text').textContent;
             let type = '';
             let deletable = !!item.querySelector('.delete-btn');
-            
             const btn = item.querySelector('.three-state-button');
             const dropdown = item.querySelector('.dropdown');
             const charInput = item.querySelector('.char-input');
             const moneyContainer = item.querySelector('.money-input-container');
             const leverageInput = item.querySelector('.leverage-input');
-
             if (btn) type = btn.dataset.type;
             else if (dropdown) type = 'dd';
             else if (charInput) type = '7char';
             else if (moneyContainer) type = 'money';
             else if (leverageInput) type = 'leverage';
-            
             structure.push({ text, type, deletable });
         });
         return structure;
@@ -746,9 +776,7 @@
             }
         }
         const activeTemplate = localStorage.getItem('active_template');
-        if (activeTemplate) {
-            select.value = activeTemplate;
-        }
+        if (activeTemplate) { select.value = activeTemplate; }
     }
     
     function saveTemplate() {
@@ -780,9 +808,7 @@
         const select = document.getElementById('template-select');
         const name = select.value;
         if (!name) { showToast('No template selected.', 'error'); return; }
-        
         const userConfirmed = await showConfirmModal('Confirm Template Deletion', `Are you sure you want to delete the template "${name}"?`, 'Delete');
-
         if (userConfirmed) {
             localStorage.removeItem(`checklist_template_${name}`);
             if (localStorage.getItem('active_template') === name) {
@@ -820,7 +846,6 @@
                 const structure = JSON.parse(e.target.result);
                 const initialName = file.name.replace('.json', '');
                 const name = await showPromptModal('Import Template', 'Please provide a name for the imported template:', initialName);
-                
                 if (name) {
                     localStorage.setItem(`checklist_template_${name}`, JSON.stringify(structure));
                     localStorage.setItem('active_template', name);
@@ -1066,6 +1091,32 @@
         buildChecklistFromStructure(initialStructure);
         
         populateTemplateDropdown();
+
+        // SortableJS initialization
+        const checklist = document.getElementById('checklist-items');
+        new Sortable(checklist, {
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            onEnd: function() {
+                updateSummaryText();
+            }
+        });
+
+        // Accordion functionality for sidebar
+        const collapsibleHeaders = document.querySelectorAll('.collapsible-header');
+        collapsibleHeaders.forEach(header => {
+            header.addEventListener('click', function() {
+                const currentSection = this.parentElement;
+                const wasActive = currentSection.classList.contains('active');
+                document.querySelectorAll('.sidebar-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                if (!wasActive) {
+                    currentSection.classList.add('active');
+                }
+            });
+        });
+
 
         // Add row buttons
         document.getElementById('add-yn-btn').addEventListener('click', () => createRow({ text: 'New Yes/No Item', type: 'yn', deletable: true }));
