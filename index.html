@@ -252,13 +252,26 @@
             font-family: monospace; font-size: 1em; resize: vertical;
             background-color: var(--input-bg-color); color: var(--text-color);
         }
-        #copy-btn {
-            width: 100%; padding: 10px; margin-top: 10px;
-            background-color: var(--copy-btn-bg); color: var(--button-text-color);
-            border: none; border-radius: 5px; cursor: pointer;
-            font-size: 1em; font-weight: bold; transition: background-color 0.2s;
+
+        .summary-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
         }
-        #copy-btn:hover { background-color: var(--copy-btn-hover-bg); }
+
+        .summary-actions button {
+            flex: 1;
+            padding: 10px;
+            background-color: var(--copy-btn-bg);
+            color: var(--button-text-color);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: background-color: 0.2s;
+        }
+        .summary-actions button:hover { background-color: var(--copy-btn-hover-bg); }
         
         .comments-container { padding-top: 10px; border-top: 1px solid var(--border-color); }
         #comments-input {
@@ -308,6 +321,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 0.9em;
         }
         .template-row button:hover, .template-row .file-upload-label:hover { background-color: var(--action-btn-hover-bg); }
         #delete-template-btn { background-color: var(--delete-action-btn-bg); }
@@ -371,24 +385,21 @@
 
     <div class="summary-container">
         <textarea id="summary-text" readonly></textarea>
-        <button id="copy-btn">Copy!</button>
+        <div class="summary-actions">
+            <button id="copy-btn">Copy!</button>
+            <button id="download-txt-btn">Download as .txt</button>
+        </div>
     </div>
 </div>
 
 <script>
     const defaultTemplate = [
-        { text: "Macro Market", type: "pn", deletable: true },
-        { text: "News", type: "pn", deletable: true },
-        { text: "Levels", type: "yn", deletable: true },
-        { text: "Trend", type: "yn", deletable: true },
-        { text: "Volume/CVD", type: "yn", deletable: true },
-        { text: "Momentum", type: "yn", deletable: true },
-        { text: "RSI", type: "7char", deletable: true },
-        { text: "Plan/Setup", type: "yn", deletable: true },
-        { text: "Long/Short", type: "ls", deletable: false },
-        { text: "Margin in USD", type: "money", deletable: false },
-        { text: "Leverage", type: "leverage", deletable: true },
-        { text: "Sleep quality", type: "dd", deletable: true },
+        { text: "Macro Market", type: "pn", deletable: true }, { text: "News", type: "pn", deletable: true },
+        { text: "Levels", type: "yn", deletable: true }, { text: "Trend", type: "yn", deletable: true },
+        { text: "Volume/CVD", type: "yn", deletable: true }, { text: "Momentum", type: "yn", deletable: true },
+        { text: "RSI", type: "7char", deletable: true }, { text: "Plan/Setup", type: "yn", deletable: true },
+        { text: "Long/Short", type: "ls", deletable: false }, { text: "Margin in USD", type: "money", deletable: false },
+        { text: "Leverage", type: "leverage", deletable: true }, { text: "Sleep quality", type: "dd", deletable: true },
         { text: "Mood", type: "dd", deletable: true }
     ];
 
@@ -431,40 +442,19 @@
         
         let controlHtml = '';
         switch(type) {
-            case 'yn':
-                controlHtml = `<div class="three-state-button" data-type="yn" data-state="neutral"><div class="icon icon-cross">×</div><div class="icon icon-check">✓</div><div class="button-overlay"></div></div>`;
-                break;
-            case 'pn':
-                controlHtml = `<div class="three-state-button" data-type="pn" data-state="neutral"><div class="icon icon-minus">-</div><div class="icon icon-plus">+</div><div class="button-overlay"></div></div>`;
-                break;
-            case 'ls':
-                controlHtml = `<div class="three-state-button" data-type="ls" data-state="neutral"><div class="icon icon-short">S</div><div class="icon icon-long">L</div><div class="button-overlay"></div></div>`;
-                break;
-            case 'dd':
-                controlHtml = `<select class="dropdown" onchange="updateSummaryText()"><option value=""></option><option value="10">10</option><option value="9">9</option><option value="8">8</option><option value="7">7</option><option value="6">6</option><option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option><option value="0">0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option><option value="-7">-7</option><option value="-8">-8</option><option value="-9">-9</option><option value="-10">-10</option></select>`;
-                break;
-            case '7char':
-                controlHtml = `<input type="text" class="char-input" maxlength="7" oninput="updateSummaryText()">`;
-                break;
-            case 'money':
-                controlHtml = `<div class="money-input-container"><input type="text" class="money-input dollars" placeholder="0" maxlength="7" oninput="validateNumericInput(this); updateSummaryText();"><span>,</span><input type="text" class="money-input cents" placeholder="00" maxlength="2" oninput="validateNumericInput(this); updateSummaryText();"></div>`;
-                break;
-            case 'leverage':
-                controlHtml = `<input type="text" class="leverage-input" maxlength="3" oninput="validateNumericInput(this); updateSummaryText();">`;
-                break;
+            case 'yn': controlHtml = `<div class="three-state-button" data-type="yn" data-state="neutral"><div class="icon icon-cross">×</div><div class="icon icon-check">✓</div><div class="button-overlay"></div></div>`; break;
+            case 'pn': controlHtml = `<div class="three-state-button" data-type="pn" data-state="neutral"><div class="icon icon-minus">-</div><div class="icon icon-plus">+</div><div class="button-overlay"></div></div>`; break;
+            case 'ls': controlHtml = `<div class="three-state-button" data-type="ls" data-state="neutral"><div class="icon icon-short">S</div><div class="icon icon-long">L</div><div class="button-overlay"></div></div>`; break;
+            case 'dd': controlHtml = `<select class="dropdown" onchange="updateSummaryText()"><option value=""></option><option value="10">10</option><option value="9">9</option><option value="8">8</option><option value="7">7</option><option value="6">6</option><option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option><option value="0">0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option><option value="-7">-7</option><option value="-8">-8</option><option value="-9">-9</option><option value="-10">-10</option></select>`; break;
+            case '7char': controlHtml = `<input type="text" class="char-input" maxlength="7" oninput="updateSummaryText()">`; break;
+            case 'money': controlHtml = `<div class="money-input-container"><input type="text" class="money-input dollars" placeholder="0" maxlength="7" oninput="validateNumericInput(this); updateSummaryText();"><span>,</span><input type="text" class="money-input cents" placeholder="00" maxlength="2" oninput="validateNumericInput(this); updateSummaryText();"></div>`; break;
+            case 'leverage': controlHtml = `<input type="text" class="leverage-input" maxlength="3" oninput="validateNumericInput(this); updateSummaryText();">`; break;
         }
 
         const deleteButtonHtml = deletable ? `<button class="delete-btn">×</button>` : '';
-        
-        newItem.innerHTML = `
-            <span class="item-text" contenteditable="true">${text}</span>
-            ${controlHtml}
-            ${deleteButtonHtml}
-        `;
-
+        newItem.innerHTML = `<span class="item-text" contenteditable="true">${text}</span>${controlHtml}${deleteButtonHtml}`;
         document.getElementById('checklist-items').appendChild(newItem);
 
-        // Re-attach listeners for dynamically created elements
         const button = newItem.querySelector('.three-state-button');
         if (button) button.addEventListener('click', handleButtonClick);
         
@@ -473,7 +463,7 @@
     }
 
     function buildChecklistFromStructure(structure) {
-        document.getElementById('checklist-items').innerHTML = ''; // Clear existing
+        document.getElementById('checklist-items').innerHTML = '';
         structure.forEach(itemData => createRow(itemData));
         updateSummaryText();
     }
@@ -525,10 +515,7 @@
     function saveTemplate() {
         const nameInput = document.getElementById('template-name-input');
         const name = nameInput.value.trim();
-        if (!name) {
-            alert('Please enter a name for the template.');
-            return;
-        }
+        if (!name) { alert('Please enter a name for the template.'); return; }
         const structure = getChecklistStructure();
         localStorage.setItem(`checklist_template_${name}`, JSON.stringify(structure));
         localStorage.setItem('active_template', name);
@@ -540,10 +527,7 @@
     function loadTemplate() {
         const select = document.getElementById('template-select');
         const name = select.value;
-        if (!name) {
-            alert('No template selected.');
-            return;
-        }
+        if (!name) { alert('No template selected.'); return; }
         const structureString = localStorage.getItem(`checklist_template_${name}`);
         if (structureString) {
             const structure = JSON.parse(structureString);
@@ -556,10 +540,7 @@
     function deleteTemplate() {
         const select = document.getElementById('template-select');
         const name = select.value;
-        if (!name) {
-            alert('No template selected.');
-            return;
-        }
+        if (!name) { alert('No template selected.'); return; }
         if (confirm(`Are you sure you want to delete the template "${name}"?`)) {
             localStorage.removeItem(`checklist_template_${name}`);
             if (localStorage.getItem('active_template') === name) {
@@ -567,17 +548,14 @@
             }
             populateTemplateDropdown();
             alert(`Template "${name}" deleted.`);
-            buildChecklistFromStructure(defaultTemplate); // Load default after deleting
+            buildChecklistFromStructure(defaultTemplate);
         }
     }
 
     function downloadTemplate() {
         const select = document.getElementById('template-select');
         const name = select.value;
-        if (!name) {
-            alert('No template selected to download.');
-            return;
-        }
+        if (!name) { alert('No template selected to download.'); return; }
         const structureString = localStorage.getItem(`checklist_template_${name}`);
         const blob = new Blob([structureString], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -607,14 +585,71 @@
                     populateTemplateDropdown();
                     alert(`Template "${name}" imported successfully!`);
                 }
-            } catch (error) {
-                alert('Invalid template file.');
-            }
+            } catch (error) { alert('Invalid template file.'); }
         };
         reader.readAsText(file);
-        event.target.value = ''; // Reset file input
+        event.target.value = '';
     }
     
+    function generateEntryTextAndTimestamp() {
+        const listContent = document.getElementById('summary-text').value;
+        const commentsText = document.getElementById('comments-input').value.trim();
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hour = String(now.getHours()).padStart(2, '0');
+        const minute = String(now.getMinutes()).padStart(2, '0');
+        const second = String(now.getSeconds()).padStart(2, '0');
+        const contentTimestamp = `${year}.${month}.${day} ${hour}:${minute}:${second}`;
+        const filenameTimestamp = `${year}.${month}.${day} ${hour}-${minute}-${second}`;
+        
+        const headerLines = [
+            "Trade No:", `Position opening: ${contentTimestamp}`, "Position closing:",
+            "Profit amount in USD:", "Margin-based profit percentage:", "Loss amount in USD:", "Margin-based loss percentage:"
+        ];
+        let finalContentArray = [...headerLines];
+        if (listContent.trim()) {
+            finalContentArray.push('');
+            finalContentArray.push(listContent.trim());
+        }
+        finalContentArray.push('');
+        finalContentArray.push('Comments:');
+        if (commentsText) {
+            finalContentArray.push(commentsText);
+        }
+        return {
+            fullContent: finalContentArray.join('\n'),
+            filenameTimestamp: filenameTimestamp
+        };
+    }
+
+    function copyToClipboard() {
+        const { fullContent } = generateEntryTextAndTimestamp();
+        navigator.clipboard.writeText(fullContent);
+        alert("Text copied to clipboard!");
+    }
+
+    function downloadEntryAsTxt() {
+        const { fullContent, filenameTimestamp } = generateEntryTextAndTimestamp();
+        const activeTemplateName = localStorage.getItem('active_template');
+        
+        let filename = `Trade ${filenameTimestamp}.txt`;
+        if (activeTemplateName) {
+            filename = `${activeTemplateName} - Trade ${filenameTimestamp}.txt`;
+        }
+
+        const blob = new Blob([fullContent], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
     function updateSummaryText() {
         const summaryTextarea = document.getElementById('summary-text');
         const listItems = document.querySelectorAll('.checklist-item');
@@ -622,28 +657,23 @@
         listItems.forEach(item => {
             const text = item.querySelector('.item-text').textContent;
             let value = "";
-            // ... (value retrieval logic remains the same)
             const itemButton = item.querySelector('.three-state-button');
             const dropdown = item.querySelector('.dropdown');
             const charInput = item.querySelector('.char-input');
             const dollarsInput = item.querySelector('.money-input.dollars');
             const centsInput = item.querySelector('.money-input.cents');
             const leverageInput = item.querySelector('.leverage-input');
-
             if (itemButton && itemButton.dataset.type === 'yn') {
                 const state = itemButton.dataset.state;
-                if (state === 'checked') { value = "Yes"; }
-                else if (state === 'unchecked') { value = "No"; }
+                if (state === 'checked') { value = "Yes"; } else if (state === 'unchecked') { value = "No"; }
             } else if (itemButton && itemButton.dataset.type === 'ls') {
                 const state = itemButton.dataset.state;
-                if (state === 'checked') { value = "Long"; }
-                else if (state === 'unchecked') { value = "Short"; }
+                if (state === 'checked') { value = "Long"; } else if (state === 'unchecked') { value = "Short"; }
             } else if (dropdown) {
                 value = dropdown.value;
             } else if (itemButton && itemButton.dataset.type === 'pn') {
                 const state = itemButton.dataset.state;
-                if (state === 'checked') { value = "+"; }
-                else if (state === 'unchecked') { value = "-"; }
+                if (state === 'checked') { value = "+"; } else if (state === 'unchecked') { value = "-"; }
             } else if (charInput) {
                 value = charInput.value;
             } else if (dollarsInput && centsInput) {
@@ -659,36 +689,6 @@
             summaryContent += `${text}: ${value}\n`;
         });
         summaryTextarea.value = summaryContent;
-    }
-    
-    function copyToClipboard() {
-        const listContent = document.getElementById('summary-text').value;
-        const commentsText = document.getElementById('comments-input').value.trim();
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const hour = String(now.getHours()).padStart(2, '0');
-        const minute = String(now.getMinutes()).padStart(2, '0');
-        const second = String(now.getSeconds()).padStart(2, '0');
-        const formattedDateTime = `${year}.${month}.${day} ${hour}:${minute}:${second}`;
-        const headerLines = [
-            "Trade No:", `Position opening: ${formattedDateTime}`, "Position closing:",
-            "Profit amount in USD:", "Margin-based profit percentage:", "Loss amount in USD:", "Margin-based loss percentage:"
-        ];
-        let finalContentArray = [...headerLines];
-        if (listContent.trim()) {
-            finalContentArray.push('');
-            finalContentArray.push(listContent.trim());
-        }
-        finalContentArray.push('');
-        finalContentArray.push('Comments:');
-        if (commentsText) {
-            finalContentArray.push(commentsText);
-        }
-        const fullContent = finalContentArray.join('\n');
-        navigator.clipboard.writeText(fullContent);
-        alert("Text copied to clipboard!");
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -715,7 +715,6 @@
         }
         buildChecklistFromStructure(initialStructure);
         
-        // Populate dropdown
         populateTemplateDropdown();
 
         // Add row buttons
@@ -731,8 +730,9 @@
         document.getElementById('download-template-btn').addEventListener('click', downloadTemplate);
         document.getElementById('upload-template-input').addEventListener('change', uploadTemplate);
 
-        // Copy button
+        // Summary action buttons
         document.getElementById('copy-btn').addEventListener('click', copyToClipboard);
+        document.getElementById('download-txt-btn').addEventListener('click', downloadEntryAsTxt);
         
         updateSummaryText();
     });
