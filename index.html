@@ -17,6 +17,10 @@
             --button-hover-bg: #2980b9;
             --copy-btn-bg: #34495e;
             --copy-btn-hover-bg: #2c3e50;
+            --action-btn-bg: #2ecc71;
+            --action-btn-hover-bg: #27ae60;
+            --delete-action-btn-bg: #e74c3c;
+            --delete-action-btn-hover-bg: #c0392b;
             --switch-track-bg: #ccc;
             --checked-state-color: #2ecc71;
             --unchecked-state-color: #e74c3c;
@@ -38,6 +42,10 @@
             --button-hover-bg: #2980b9;
             --copy-btn-bg: #1abc9c;
             --copy-btn-hover-bg: #16a085;
+            --action-btn-bg: #1abc9c;
+            --action-btn-hover-bg: #16a085;
+            --delete-action-btn-bg: #e74c3c;
+            --delete-action-btn-hover-bg: #c0392b;
             --switch-track-bg: #566573;
             --checked-state-color: #27ae60;
             --unchecked-state-color: #c0392b;
@@ -98,11 +106,7 @@
             height: 25px;
         }
 
-        .theme-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
+        .theme-switch input { opacity: 0; width: 0; height: 0; }
 
         .slider {
             position: absolute;
@@ -128,13 +132,8 @@
             border-radius: 50%;
         }
 
-        input:checked + .slider {
-            background-color: #3498db;
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(25px);
-        }
+        input:checked + .slider { background-color: #3498db; }
+        input:checked + .slider:before { transform: translateX(25px); }
 
         .checklist-item {
             display: flex;
@@ -144,9 +143,7 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        .checklist-item:last-child {
-            border-bottom: none;
-        }
+        .checklist-item:last-child { border-bottom: none; }
 
         .item-text {
             font-size: 1.1em;
@@ -171,10 +168,8 @@
 
         .three-state-button .button-overlay {
             position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
             background-color: var(--container-bg);
             transition: background-color 0.3s;
         }
@@ -204,7 +199,7 @@
         .three-state-button.checked .icon,
         .three-state-button.unchecked .icon { color: white; }
         
-        .dropdown, .char-input, #comments-input, .money-input, .leverage-input {
+        .dropdown, .char-input, #comments-input, .money-input, .leverage-input, #template-name-input, #template-select {
             margin-right: 10px;
             height: 25px;
             border-radius: 5px;
@@ -218,9 +213,7 @@
             box-sizing: border-box;
         }
 
-        .char-input, .leverage-input {
-            text-align: center;
-        }
+        .char-input, .leverage-input { text-align: center; }
         .char-input { width: 80px; }
         .leverage-input { width: 45px; }
         
@@ -231,16 +224,8 @@
             margin-right: 10px;
         }
 
-        .money-input-container span {
-            color: var(--text-color);
-            font-weight: bold;
-        }
-
-        .money-input {
-            text-align: right;
-            margin-right: 0;
-        }
-
+        .money-input-container span { color: var(--text-color); font-weight: bold; }
+        .money-input { text-align: right; margin-right: 0; }
         .money-input.dollars { width: 80px; }
         .money-input.cents { width: 35px; }
 
@@ -257,97 +242,83 @@
             display: flex;
             align-items: center;
         }
-        .delete-btn:hover {
-            color: var(--delete-btn-hover-color);
-        }
+        .delete-btn:hover { color: var(--delete-btn-hover-color); }
         
-        .summary-container {
-            width: 350px;
-            margin-top: 100px;
-            margin-left: 100px;
-        }
+        .summary-container { width: 350px; margin-top: 100px; margin-left: 100px; }
         
         #summary-text {
-            width: 100%;
-            height: 150px;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
-            font-family: monospace;
-            font-size: 1em;
-            resize: vertical;
-            background-color: var(--input-bg-color);
-            color: var(--text-color);
+            width: 100%; height: 150px; padding: 10px;
+            border: 1px solid var(--border-color); border-radius: 5px;
+            font-family: monospace; font-size: 1em; resize: vertical;
+            background-color: var(--input-bg-color); color: var(--text-color);
         }
         #copy-btn {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            background-color: var(--copy-btn-bg);
-            color: var(--button-text-color);
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: bold;
-            transition: background-color 0.2s;
+            width: 100%; padding: 10px; margin-top: 10px;
+            background-color: var(--copy-btn-bg); color: var(--button-text-color);
+            border: none; border-radius: 5px; cursor: pointer;
+            font-size: 1em; font-weight: bold; transition: background-color 0.2s;
         }
         #copy-btn:hover { background-color: var(--copy-btn-hover-bg); }
         
-        .comments-container {
-            padding-top: 10px;
-            border-top: 1px solid var(--border-color);
-        }
-
+        .comments-container { padding-top: 10px; border-top: 1px solid var(--border-color); }
         #comments-input {
-            width: 100%;
-            height: auto;
-            font-family: inherit;
-            padding: 8px;
-            resize: vertical;
-            margin-right: 0;
+            width: 100%; height: auto; font-family: inherit; padding: 8px;
+            resize: vertical; margin-right: 0;
         }
         
-        .add-row-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-
+        .add-row-buttons { display: flex; justify-content: space-between; margin-top: 15px; flex-wrap: wrap; }
         .add-row-buttons button {
+            flex: 1; padding: 10px; background-color: var(--button-bg); color: var(--button-text-color);
+            border: none; border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: bold;
+            transition: background-color 0.2s; margin-right: 10px; margin-bottom: 10px; min-width: 100px;
+        }
+        .add-row-buttons button:last-child { margin-right: 0; }
+        .add-row-buttons button:hover { background-color: var(--button-hover-bg); }
+
+        .template-management-container {
+            border-top: 2px solid var(--border-color);
+            margin-top: 20px;
+            padding-top: 15px;
+        }
+        .template-management-container h3 {
+            margin: 0 0 10px 0;
+            color: var(--text-color);
+            font-size: 1.1em;
+        }
+        .template-row {
+            display: flex;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+        .template-row input, .template-row select {
             flex: 1;
-            padding: 10px;
-            background-color: var(--button-bg);
-            color: var(--button-text-color);
+            margin-right: 0;
+            height: 35px;
+        }
+        .template-row button, .template-row .file-upload-label {
+            padding: 0 15px;
+            height: 35px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1em;
             font-weight: bold;
+            color: var(--button-text-color);
+            background-color: var(--action-btn-bg);
             transition: background-color 0.2s;
-            margin-right: 10px;
-            margin-bottom: 10px;
-            min-width: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .add-row-buttons button:last-child {
-            margin-right: 0;
-        }
-        .add-row-buttons button:hover { background-color: var(--button-hover-bg); }
+        .template-row button:hover, .template-row .file-upload-label:hover { background-color: var(--action-btn-hover-bg); }
+        #delete-template-btn { background-color: var(--delete-action-btn-bg); }
+        #delete-template-btn:hover { background-color: var(--delete-action-btn-hover-bg); }
+        #upload-template-input { display: none; }
+
 
         @media (max-width: 800px) {
-            .main-container {
-                flex-direction: column;
-                align-items: center;
-                gap: 20px;
-            }
-            .summary-container {
-                margin-top: 0;
-                margin-left: 0;
-            }
-            .checklist-container, .summary-container {
-                width: 90%;
-            }
+            .main-container { flex-direction: column; align-items: center; gap: 20px; }
+            .summary-container { margin-top: 0; margin-left: 0; }
+            .checklist-container, .summary-container { width: 90%; }
             .add-row-buttons { flex-direction: column; }
             .add-row-buttons button { margin-right: 0; }
         }
@@ -366,162 +337,35 @@
         </div>
 
         <div id="checklist-items">
-            <div class="checklist-item">
-                <span class="item-text" contenteditable="true">Macro Market</span>
-                <div class="three-state-button" data-type="pn" data-state="neutral">
-                    <div class="icon icon-minus">-</div>
-                    <div class="icon icon-plus">+</div>
-                    <div class="button-overlay"></div>
-                </div>
-                <button class="delete-btn">×</button>
             </div>
-            <div class="checklist-item">
-                <span class="item-text" contenteditable="true">News</span>
-                <div class="three-state-button" data-type="pn" data-state="neutral">
-                    <div class="icon icon-minus">-</div>
-                    <div class="icon icon-plus">+</div>
-                    <div class="button-overlay"></div>
-                </div>
-                <button class="delete-btn">×</button>
-            </div>
-            <div class="checklist-item">
-                <span class="item-text" contenteditable="true">Levels</span>
-                <div class="three-state-button" data-type="yn" data-state="neutral">
-                    <div class="icon icon-cross">×</div>
-                    <div class="icon icon-check">✓</div>
-                    <div class="button-overlay"></div>
-                </div>
-                <button class="delete-btn">×</button>
-            </div>
-            <div class="checklist-item">
-                <span class="item-text" contenteditable="true">Trend</span>
-                <div class="three-state-button" data-type="yn" data-state="neutral">
-                    <div class="icon icon-cross">×</div>
-                    <div class="icon icon-check">✓</div>
-                    <div class="button-overlay"></div>
-                </div>
-                <button class="delete-btn">×</button>
-            </div>
-            <div class="checklist-item">
-                <span class="item-text" contenteditable="true">Volume/CVD</span>
-                <div class="three-state-button" data-type="yn" data-state="neutral">
-                    <div class="icon icon-cross">×</div>
-                    <div class="icon icon-check">✓</div>
-                    <div class="button-overlay"></div>
-                </div>
-                <button class="delete-btn">×</button>
-            </div>
-            <div class="checklist-item">
-                <span class="item-text" contenteditable="true">Momentum</span>
-                <div class="three-state-button" data-type="yn" data-state="neutral">
-                    <div class="icon icon-cross">×</div>
-                    <div class="icon icon-check">✓</div>
-                    <div class="button-overlay"></div>
-                </div>
-                <button class="delete-btn">×</button>
-            </div>
-            <div class="checklist-item">
-                <span class="item-text" contenteditable="true">RSI</span>
-                <input type="text" class="char-input" maxlength="7" oninput="updateSummaryText()">
-                <button class="delete-btn">×</button>
-            </div>
-            <div class="checklist-item">
-                <span class="item-text" contenteditable="true">Plan/Setup</span>
-                <div class="three-state-button" data-type="yn" data-state="neutral">
-                    <div class="icon icon-cross">×</div>
-                    <div class="icon icon-check">✓</div>
-                    <div class="button-overlay"></div>
-                </div>
-                <button class="delete-btn">×</button>
-            </div>
-            <div class="checklist-item">
-                <span class="item-text" contenteditable="true">Long/Short</span>
-                <div class="three-state-button" data-type="ls" data-state="neutral">
-                    <div class="icon icon-short">S</div>
-                    <div class="icon icon-long">L</div>
-                    <div class="button-overlay"></div>
-                </div>
-            </div>
-            <div class="checklist-item">
-                <span class="item-text" contenteditable="true">Margin in USD</span>
-                <div class="money-input-container">
-                    <input type="text" class="money-input dollars" placeholder="0" maxlength="7" oninput="validateNumericInput(this); updateSummaryText();">
-                    <span>,</span>
-                    <input type="text" class="money-input cents" placeholder="00" maxlength="2" oninput="validateNumericInput(this); updateSummaryText();">
-                </div>
-            </div>
-            <div class="checklist-item">
-                <span class="item-text" contenteditable="true">Leverage</span>
-                <input type="text" class="leverage-input" maxlength="3" oninput="validateNumericInput(this); updateSummaryText();">
-                <button class="delete-btn">×</button>
-            </div>
-            <div class="checklist-item">
-                <span class="item-text" contenteditable="true">Sleep quality</span>
-                <select class="dropdown" data-type="dd" onchange="updateSummaryText()">
-                    <option value=""></option>
-                    <option value="10">10</option>
-                    <option value="9">9</option>
-                    <option value="8">8</option>
-                    <option value="7">7</option>
-                    <option value="6">6</option>
-                    <option value="5">5</option>
-                    <option value="4">4</option>
-                    <option value="3">3</option>
-                    <option value="2">2</option>
-                    <option value="1">1</option>
-                    <option value="0">0</option>
-                    <option value="-1">-1</option>
-                    <option value="-2">-2</option>
-                    <option value="-3">-3</option>
-                    <option value="-4">-4</option>
-                    <option value="-5">-5</option>
-                    <option value="-6">-6</option>
-                    <option value="-7">-7</option>
-                    <option value="-8">-8</option>
-                    <option value="-9">-9</option>
-                    <option value="-10">-10</option>
-                </select>
-                <button class="delete-btn">×</button>
-            </div>
-            <div class="checklist-item">
-                <span class="item-text" contenteditable="true">Mood</span>
-                <select class="dropdown" data-type="dd" onchange="updateSummaryText()">
-                    <option value=""></option>
-                    <option value="10">10</option>
-                    <option value="9">9</option>
-                    <option value="8">8</option>
-                    <option value="7">7</option>
-                    <option value="6">6</option>
-                    <option value="5">5</option>
-                    <option value="4">4</option>
-                    <option value="3">3</option>
-                    <option value="2">2</option>
-                    <option value="1">1</option>
-                    <option value="0">0</option>
-                    <option value="-1">-1</option>
-                    <option value="-2">-2</option>
-                    <option value="-3">-3</option>
-                    <option value="-4">-4</option>
-                    <option value="-5">-5</option>
-                    <option value="-6">-6</option>
-                    <option value="-7">-7</option>
-                    <option value="-8">-8</option>
-                    <option value="-9">-9</option>
-                    <option value="-10">-10</option>
-                </select>
-                <button class="delete-btn">×</button>
-            </div>
-        </div>
         
         <div class="comments-container">
             <textarea id="comments-input" placeholder="Comments..." maxlength="1000" rows="3"></textarea>
         </div>
 
         <div class="add-row-buttons">
-            <button id="add-yn-btn"> Add Yes/No Item</button>
-            <button id="add-dd-btn"> Add Dropdown Item</button>
-            <button id="add-pn-btn"> Add -/+ Item</button>
-            <button id="add-7char-btn"> Add 7 Char Item</button>
+            <button id="add-yn-btn">Add Yes/No Item</button>
+            <button id="add-dd-btn">Add Dropdown Item</button>
+            <button id="add-pn-btn">Add -/+ Item</button>
+            <button id="add-7char-btn">Add 7 Char Item</button>
+        </div>
+
+        <div class="template-management-container">
+            <h3>Template Management</h3>
+            <div class="template-row">
+                <input type="text" id="template-name-input" placeholder="Enter template name...">
+                <button id="save-template-btn">Save</button>
+            </div>
+            <div class="template-row">
+                <select id="template-select"></select>
+                <button id="load-template-btn">Load</button>
+                <button id="delete-template-btn">Delete</button>
+            </div>
+             <div class="template-row">
+                <button id="download-template-btn">Download</button>
+                <label for="upload-template-input" class="file-upload-label">Load from File</label>
+                <input type="file" id="upload-template-input" accept=".json">
+            </div>
         </div>
     </div>
 
@@ -532,6 +376,22 @@
 </div>
 
 <script>
+    const defaultTemplate = [
+        { text: "Macro Market", type: "pn", deletable: true },
+        { text: "News", type: "pn", deletable: true },
+        { text: "Levels", type: "yn", deletable: true },
+        { text: "Trend", type: "yn", deletable: true },
+        { text: "Volume/CVD", type: "yn", deletable: true },
+        { text: "Momentum", type: "yn", deletable: true },
+        { text: "RSI", type: "7char", deletable: true },
+        { text: "Plan/Setup", type: "yn", deletable: true },
+        { text: "Long/Short", type: "ls", deletable: false },
+        { text: "Margin in USD", type: "money", deletable: false },
+        { text: "Leverage", type: "leverage", deletable: true },
+        { text: "Sleep quality", type: "dd", deletable: true },
+        { text: "Mood", type: "dd", deletable: true }
+    ];
+
     function validateNumericInput(input) {
         input.value = input.value.replace(/[^0-9]/g, '');
     }
@@ -556,106 +416,203 @@
         }
         updateSummaryText();
     }
-    
-    function createYNRow() {
-        const newItem = document.createElement('div');
-        newItem.className = 'checklist-item';
-        newItem.innerHTML = `
-            <span class="item-text" contenteditable="true">New Yes/No Item</span>
-            <div class="three-state-button" data-type="yn" data-state="neutral">
-                <div class="icon icon-cross">×</div>
-                <div class="icon icon-check">✓</div>
-                <div class="button-overlay"></div>
-            </div>
-            <button class="delete-btn">×</button>
-        `;
-        const checklistItems = document.getElementById('checklist-items');
-        checklistItems.appendChild(newItem);
-        newItem.querySelector('.three-state-button').addEventListener('click', handleButtonClick);
-        newItem.querySelector('.delete-btn').addEventListener('click', handleDeleteClick);
-        updateSummaryText();
-    }
 
-    function createDDRow() {
-        const newItem = document.createElement('div');
-        newItem.className = 'checklist-item';
-        newItem.innerHTML = `
-            <span class="item-text" contenteditable="true">New Dropdown Item</span>
-            <select class="dropdown" data-type="dd" onchange="updateSummaryText()">
-                <option value=""></option>
-                <option value="10">10</option>
-                <option value="9">9</option>
-                <option value="8">8</option>
-                <option value="7">7</option>
-                <option value="6">6</option>
-                <option value="5">5</option>
-                <option value="4">4</option>
-                <option value="3">3</option>
-                <option value="2">2</option>
-                <option value="1">1</option>
-                <option value="0">0</option>
-                <option value="-1">-1</option>
-                <option value="-2">-2</option>
-                <option value="-3">-3</option>
-                <option value="-4">-4</option>
-                <option value="-5">-5</option>
-                <option value="-6">-6</option>
-                <option value="-7">-7</option>
-                <option value="-8">-8</option>
-                <option value="-9">-9</option>
-                <option value="-10">-10</option>
-            </select>
-            <button class="delete-btn">×</button>
-        `;
-        const checklistItems = document.getElementById('checklist-items');
-        checklistItems.appendChild(newItem);
-        newItem.querySelector('.delete-btn').addEventListener('click', handleDeleteClick);
-        updateSummaryText();
-    }
-    
-    function createPNRow() {
-        const newItem = document.createElement('div');
-        newItem.className = 'checklist-item';
-        newItem.innerHTML = `
-            <span class="item-text" contenteditable="true">New +/- Item</span>
-            <div class="three-state-button" data-type="pn" data-state="neutral">
-                <div class="icon icon-minus">-</div>
-                <div class="icon icon-plus">+</div>
-                <div class="button-overlay"></div>
-            </div>
-            <button class="delete-btn">×</button>
-        `;
-        const checklistItems = document.getElementById('checklist-items');
-        checklistItems.appendChild(newItem);
-        newItem.querySelector('.three-state-button').addEventListener('click', handleButtonClick);
-        newItem.querySelector('.delete-btn').addEventListener('click', handleDeleteClick);
-        updateSummaryText();
-    }
-
-    function create7CharRow() {
-        const newItem = document.createElement('div');
-        newItem.className = 'checklist-item';
-        newItem.innerHTML = `
-            <span class="item-text" contenteditable="true">New 7 Char Item</span>
-            <input type="text" class="char-input" maxlength="7" oninput="updateSummaryText()">
-            <button class="delete-btn">×</button>
-        `;
-        const checklistItems = document.getElementById('checklist-items');
-        checklistItems.appendChild(newItem);
-        newItem.querySelector('.delete-btn').addEventListener('click', handleDeleteClick);
-        updateSummaryText();
-    }
-    
     function handleDeleteClick(event) {
-        const confirmDelete = confirm("Are you sure you want to delete this item?");
-        if (confirmDelete) {
-            const deleteBtn = event.currentTarget;
-            const itemToRemove = deleteBtn.closest('.checklist-item');
-            if (itemToRemove) {
-                itemToRemove.remove();
+        if (confirm("Are you sure you want to delete this item?")) {
+            event.currentTarget.closest('.checklist-item').remove();
+            updateSummaryText();
+        }
+    }
+
+    function createRow(itemData) {
+        const { text, type, deletable } = itemData;
+        const newItem = document.createElement('div');
+        newItem.className = 'checklist-item';
+        
+        let controlHtml = '';
+        switch(type) {
+            case 'yn':
+                controlHtml = `<div class="three-state-button" data-type="yn" data-state="neutral"><div class="icon icon-cross">×</div><div class="icon icon-check">✓</div><div class="button-overlay"></div></div>`;
+                break;
+            case 'pn':
+                controlHtml = `<div class="three-state-button" data-type="pn" data-state="neutral"><div class="icon icon-minus">-</div><div class="icon icon-plus">+</div><div class="button-overlay"></div></div>`;
+                break;
+            case 'ls':
+                controlHtml = `<div class="three-state-button" data-type="ls" data-state="neutral"><div class="icon icon-short">S</div><div class="icon icon-long">L</div><div class="button-overlay"></div></div>`;
+                break;
+            case 'dd':
+                controlHtml = `<select class="dropdown" onchange="updateSummaryText()"><option value=""></option><option value="10">10</option><option value="9">9</option><option value="8">8</option><option value="7">7</option><option value="6">6</option><option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option><option value="0">0</option><option value="-1">-1</option><option value="-2">-2</option><option value="-3">-3</option><option value="-4">-4</option><option value="-5">-5</option><option value="-6">-6</option><option value="-7">-7</option><option value="-8">-8</option><option value="-9">-9</option><option value="-10">-10</option></select>`;
+                break;
+            case '7char':
+                controlHtml = `<input type="text" class="char-input" maxlength="7" oninput="updateSummaryText()">`;
+                break;
+            case 'money':
+                controlHtml = `<div class="money-input-container"><input type="text" class="money-input dollars" placeholder="0" maxlength="7" oninput="validateNumericInput(this); updateSummaryText();"><span>,</span><input type="text" class="money-input cents" placeholder="00" maxlength="2" oninput="validateNumericInput(this); updateSummaryText();"></div>`;
+                break;
+            case 'leverage':
+                controlHtml = `<input type="text" class="leverage-input" maxlength="3" oninput="validateNumericInput(this); updateSummaryText();">`;
+                break;
+        }
+
+        const deleteButtonHtml = deletable ? `<button class="delete-btn">×</button>` : '';
+        
+        newItem.innerHTML = `
+            <span class="item-text" contenteditable="true">${text}</span>
+            ${controlHtml}
+            ${deleteButtonHtml}
+        `;
+
+        document.getElementById('checklist-items').appendChild(newItem);
+
+        // Re-attach listeners for dynamically created elements
+        const button = newItem.querySelector('.three-state-button');
+        if (button) button.addEventListener('click', handleButtonClick);
+        
+        const deleteBtn = newItem.querySelector('.delete-btn');
+        if (deleteBtn) deleteBtn.addEventListener('click', handleDeleteClick);
+    }
+
+    function buildChecklistFromStructure(structure) {
+        document.getElementById('checklist-items').innerHTML = ''; // Clear existing
+        structure.forEach(itemData => createRow(itemData));
+        updateSummaryText();
+    }
+
+    function getChecklistStructure() {
+        const items = document.querySelectorAll('#checklist-items .checklist-item');
+        const structure = [];
+        items.forEach(item => {
+            const text = item.querySelector('.item-text').textContent;
+            let type = '';
+            let deletable = !!item.querySelector('.delete-btn');
+            
+            const btn = item.querySelector('.three-state-button');
+            const dropdown = item.querySelector('.dropdown');
+            const charInput = item.querySelector('.char-input');
+            const moneyContainer = item.querySelector('.money-input-container');
+            const leverageInput = item.querySelector('.leverage-input');
+
+            if (btn) type = btn.dataset.type;
+            else if (dropdown) type = 'dd';
+            else if (charInput) type = '7char';
+            else if (moneyContainer) type = 'money';
+            else if (leverageInput) type = 'leverage';
+            
+            structure.push({ text, type, deletable });
+        });
+        return structure;
+    }
+
+    function populateTemplateDropdown() {
+        const select = document.getElementById('template-select');
+        select.innerHTML = '';
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith('checklist_template_')) {
+                const name = key.replace('checklist_template_', '');
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                select.appendChild(option);
             }
         }
-        updateSummaryText();
+        const activeTemplate = localStorage.getItem('active_template');
+        if (activeTemplate) {
+            select.value = activeTemplate;
+        }
+    }
+    
+    function saveTemplate() {
+        const nameInput = document.getElementById('template-name-input');
+        const name = nameInput.value.trim();
+        if (!name) {
+            alert('Please enter a name for the template.');
+            return;
+        }
+        const structure = getChecklistStructure();
+        localStorage.setItem(`checklist_template_${name}`, JSON.stringify(structure));
+        localStorage.setItem('active_template', name);
+        nameInput.value = '';
+        populateTemplateDropdown();
+        alert(`Template "${name}" saved!`);
+    }
+
+    function loadTemplate() {
+        const select = document.getElementById('template-select');
+        const name = select.value;
+        if (!name) {
+            alert('No template selected.');
+            return;
+        }
+        const structureString = localStorage.getItem(`checklist_template_${name}`);
+        if (structureString) {
+            const structure = JSON.parse(structureString);
+            buildChecklistFromStructure(structure);
+            localStorage.setItem('active_template', name);
+            alert(`Template "${name}" loaded!`);
+        }
+    }
+
+    function deleteTemplate() {
+        const select = document.getElementById('template-select');
+        const name = select.value;
+        if (!name) {
+            alert('No template selected.');
+            return;
+        }
+        if (confirm(`Are you sure you want to delete the template "${name}"?`)) {
+            localStorage.removeItem(`checklist_template_${name}`);
+            if (localStorage.getItem('active_template') === name) {
+                localStorage.removeItem('active_template');
+            }
+            populateTemplateDropdown();
+            alert(`Template "${name}" deleted.`);
+            buildChecklistFromStructure(defaultTemplate); // Load default after deleting
+        }
+    }
+
+    function downloadTemplate() {
+        const select = document.getElementById('template-select');
+        const name = select.value;
+        if (!name) {
+            alert('No template selected to download.');
+            return;
+        }
+        const structureString = localStorage.getItem(`checklist_template_${name}`);
+        const blob = new Blob([structureString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${name}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function uploadTemplate(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const structure = JSON.parse(e.target.result);
+                let name = file.name.replace('.json', '');
+                name = prompt('Enter a name for the imported template:', name);
+                if (name) {
+                    localStorage.setItem(`checklist_template_${name}`, JSON.stringify(structure));
+                    localStorage.setItem('active_template', name);
+                    buildChecklistFromStructure(structure);
+                    populateTemplateDropdown();
+                    alert(`Template "${name}" imported successfully!`);
+                }
+            } catch (error) {
+                alert('Invalid template file.');
+            }
+        };
+        reader.readAsText(file);
+        event.target.value = ''; // Reset file input
     }
     
     function updateSummaryText() {
@@ -665,6 +622,7 @@
         listItems.forEach(item => {
             const text = item.querySelector('.item-text').textContent;
             let value = "";
+            // ... (value retrieval logic remains the same)
             const itemButton = item.querySelector('.three-state-button');
             const dropdown = item.querySelector('.dropdown');
             const charInput = item.querySelector('.char-input');
@@ -715,57 +673,67 @@
         const second = String(now.getSeconds()).padStart(2, '0');
         const formattedDateTime = `${year}.${month}.${day} ${hour}:${minute}:${second}`;
         const headerLines = [
-            "Trade No:",
-            `Position opening: ${formattedDateTime}`,
-            "Position closing:",
-            "Profit amount in USD:",
-            "Margin-based profit percentage:",
-            "Loss amount in USD:",
-            "Margin-based loss percentage:"
+            "Trade No:", `Position opening: ${formattedDateTime}`, "Position closing:",
+            "Profit amount in USD:", "Margin-based profit percentage:", "Loss amount in USD:", "Margin-based loss percentage:"
         ];
         let finalContentArray = [...headerLines];
         if (listContent.trim()) {
             finalContentArray.push('');
             finalContentArray.push(listContent.trim());
         }
-        
         finalContentArray.push('');
         finalContentArray.push('Comments:');
         if (commentsText) {
             finalContentArray.push(commentsText);
         }
-
         const fullContent = finalContentArray.join('\n');
         navigator.clipboard.writeText(fullContent);
         alert("Text copied to clipboard!");
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+        // Theme switcher
         const themeToggle = document.getElementById('theme-toggle');
         const body = document.body;
         themeToggle.addEventListener('change', () => {
             body.classList.toggle('dark-mode');
-            if (body.classList.contains('dark-mode')) {
-                localStorage.setItem('theme', 'dark');
-            } else {
-                localStorage.setItem('theme', 'light');
-            }
+            localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
         });
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
+        if (localStorage.getItem('theme') === 'dark') {
             body.classList.add('dark-mode');
             themeToggle.checked = true;
         }
-        document.querySelectorAll('.three-state-button').forEach(button => button.addEventListener('click', handleButtonClick));
-        document.querySelectorAll('.dropdown').forEach(dropdown => dropdown.addEventListener('change', updateSummaryText));
-        document.querySelectorAll('.char-input').forEach(input => input.addEventListener('input', updateSummaryText));
-        document.querySelectorAll('.delete-btn').forEach(button => button.addEventListener('click', handleDeleteClick));
-        document.getElementById('add-yn-btn').addEventListener('click', createYNRow);
-        document.getElementById('add-dd-btn').addEventListener('click', createDDRow);
-        document.getElementById('add-pn-btn').addEventListener('click', createPNRow);
-        document.getElementById('add-7char-btn').addEventListener('click', create7CharRow);
+
+        // Initial checklist load
+        const activeTemplateName = localStorage.getItem('active_template');
+        let initialStructure = defaultTemplate;
+        if (activeTemplateName) {
+            const savedStructure = localStorage.getItem(`checklist_template_${activeTemplateName}`);
+            if (savedStructure) {
+                initialStructure = JSON.parse(savedStructure);
+            }
+        }
+        buildChecklistFromStructure(initialStructure);
+        
+        // Populate dropdown
+        populateTemplateDropdown();
+
+        // Add row buttons
+        document.getElementById('add-yn-btn').addEventListener('click', () => createRow({ text: 'New Yes/No Item', type: 'yn', deletable: true }));
+        document.getElementById('add-dd-btn').addEventListener('click', () => createRow({ text: 'New Dropdown Item', type: 'dd', deletable: true }));
+        document.getElementById('add-pn-btn').addEventListener('click', () => createRow({ text: 'New +/- Item', type: 'pn', deletable: true }));
+        document.getElementById('add-7char-btn').addEventListener('click', () => createRow({ text: 'New 7 Char Item', type: '7char', deletable: true }));
+
+        // Template management buttons
+        document.getElementById('save-template-btn').addEventListener('click', saveTemplate);
+        document.getElementById('load-template-btn').addEventListener('click', loadTemplate);
+        document.getElementById('delete-template-btn').addEventListener('click', deleteTemplate);
+        document.getElementById('download-template-btn').addEventListener('click', downloadTemplate);
+        document.getElementById('upload-template-input').addEventListener('change', uploadTemplate);
+
+        // Copy button
         document.getElementById('copy-btn').addEventListener('click', copyToClipboard);
-        document.querySelectorAll('.money-input, .leverage-input').forEach(input => input.addEventListener('input', () => validateNumericInput(input)));
+        
         updateSummaryText();
     });
 </script>
