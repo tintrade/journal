@@ -52,7 +52,7 @@
             flex-grow: 1;
         }
 
-        /* Yes/No Button styles (existing) */
+        /* Yes/No & Plus/Minus Button styles */
         .three-state-button {
             display: flex;
             border-radius: 50px;
@@ -89,12 +89,16 @@
             z-index: 2;
         }
         
-        .three-state-button.checked .icon-cross { opacity: 0; }
-        .three-state-button.unchecked .icon-check { opacity: 0; }
-        .three-state-button.checked .icon-check,
-        .three-state-button.unchecked .icon-cross { color: white; }
+        .three-state-button[data-type="yn"].checked .icon-cross { opacity: 0; }
+        .three-state-button[data-type="yn"].unchecked .icon-check { opacity: 0; }
+        .three-state-button[data-type="yn"].checked .icon-check,
+        .three-state-button[data-type="yn"].unchecked .icon-cross { color: white; }
+        
+        .three-state-button[data-type="pn"].checked .icon-minus { opacity: 0; }
+        .three-state-button[data-type="pn"].unchecked .icon-plus { opacity: 0; }
+        .three-state-button[data-type="pn"].checked .icon-plus,
+        .three-state-button[data-type="pn"].unchecked .icon-minus { color: white; }
 
-        /* Dropdown style */
         .dropdown {
             margin-right: 10px;
             height: 25px;
@@ -106,11 +110,25 @@
             padding: 0 5px;
             color: #333;
         }
+
+        .char-input {
+            margin-right: 10px;
+            height: 25px;
+            width: 80px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 1em;
+            outline: none;
+            padding: 0 5px;
+            box-sizing: border-box;
+            color: #333;
+            text-align: center;
+        }
         
         .delete-btn {
             background: none;
             border: none;
-            color: #e74c3c;
+            color: #888;
             font-size: 1.5em;
             cursor: pointer;
             transition: color 0.2s;
@@ -121,7 +139,7 @@
             align-items: center;
         }
         .delete-btn:hover {
-            color: #c0392b;
+            color: #555;
         }
         
         .summary-container {
@@ -148,7 +166,7 @@
             background-color: #34495e;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 5-px;
             cursor: pointer;
             font-size: 1em;
             font-weight: bold;
@@ -156,10 +174,27 @@
         }
         #copy-btn:hover { background-color: #2c3e50; }
         
+        .comments-container {
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        #comments-input {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 1em;
+            padding: 8px;
+            resize: vertical;
+        }
+        
         .add-row-buttons {
             display: flex;
             justify-content: space-between;
             margin-top: 15px;
+            flex-wrap: wrap;
         }
 
         .add-row-buttons button {
@@ -174,6 +209,8 @@
             font-weight: bold;
             transition: background-color 0.2s;
             margin-right: 10px;
+            margin-bottom: 10px;
+            min-width: 100px;
         }
         .add-row-buttons button:last-child {
             margin-right: 0;
@@ -217,8 +254,26 @@
 
         <div id="checklist-items">
             <div class="checklist-item">
-                <span class="item-text" contenteditable="true">MACRO</span>
-                <div class="three-state-button" data-state="neutral">
+                <span class="item-text" contenteditable="true">Macro Market</span>
+                <div class="three-state-button" data-type="pn" data-state="neutral">
+                    <div class="icon icon-minus">-</div>
+                    <div class="icon icon-plus">+</div>
+                    <div class="button-overlay"></div>
+                </div>
+                <button class="delete-btn">×</button>
+            </div>
+            <div class="checklist-item">
+                <span class="item-text" contenteditable="true">News</span>
+                <div class="three-state-button" data-type="pn" data-state="neutral">
+                    <div class="icon icon-minus">-</div>
+                    <div class="icon icon-plus">+</div>
+                    <div class="button-overlay"></div>
+                </div>
+                <button class="delete-btn">×</button>
+            </div>
+            <div class="checklist-item">
+                <span class="item-text" contenteditable="true">Levels</span>
+                <div class="three-state-button" data-type="yn" data-state="neutral">
                     <div class="icon icon-cross">×</div>
                     <div class="icon icon-check">✓</div>
                     <div class="button-overlay"></div>
@@ -226,8 +281,8 @@
                 <button class="delete-btn">×</button>
             </div>
             <div class="checklist-item">
-                <span class="item-text" contenteditable="true">NEWS</span>
-                <div class="three-state-button" data-state="neutral">
+                <span class="item-text" contenteditable="true">Trend</span>
+                <div class="three-state-button" data-type="yn" data-state="neutral">
                     <div class="icon icon-cross">×</div>
                     <div class="icon icon-check">✓</div>
                     <div class="button-overlay"></div>
@@ -235,8 +290,8 @@
                 <button class="delete-btn">×</button>
             </div>
             <div class="checklist-item">
-                <span class="item-text" contenteditable="true">LEVELS</span>
-                <div class="three-state-button" data-state="neutral">
+                <span class="item-text" contenteditable="true">Volume/CVD</span>
+                <div class="three-state-button" data-type="yn" data-state="neutral">
                     <div class="icon icon-cross">×</div>
                     <div class="icon icon-check">✓</div>
                     <div class="button-overlay"></div>
@@ -244,8 +299,8 @@
                 <button class="delete-btn">×</button>
             </div>
             <div class="checklist-item">
-                <span class="item-text" contenteditable="true">TREND</span>
-                <div class="three-state-button" data-state="neutral">
+                <span class="item-text" contenteditable="true">Momentum</span>
+                <div class="three-state-button" data-type="yn" data-state="neutral">
                     <div class="icon icon-cross">×</div>
                     <div class="icon icon-check">✓</div>
                     <div class="button-overlay"></div>
@@ -253,8 +308,13 @@
                 <button class="delete-btn">×</button>
             </div>
             <div class="checklist-item">
-                <span class="item-text" contenteditable="true">VOLUME/CVD</span>
-                <div class="three-state-button" data-state="neutral">
+                <span class="item-text" contenteditable="true">RSI</span>
+                <input type="text" class="char-input" maxlength="7" oninput="updateSummaryText()">
+                <button class="delete-btn">×</button>
+            </div>
+            <div class="checklist-item">
+                <span class="item-text" contenteditable="true">Plan/Setup</span>
+                <div class="three-state-button" data-type="yn" data-state="neutral">
                     <div class="icon icon-cross">×</div>
                     <div class="icon icon-check">✓</div>
                     <div class="button-overlay"></div>
@@ -262,55 +322,72 @@
                 <button class="delete-btn">×</button>
             </div>
             <div class="checklist-item">
-                <span class="item-text" contenteditable="true">MOMENTUM</span>
-                <div class="three-state-button" data-state="neutral">
-                    <div class="icon icon-cross">×</div>
-                    <div class="icon icon-check">✓</div>
-                    <div class="button-overlay"></div>
-                </div>
+                <span class="item-text" contenteditable="true">Sleep quality</span>
+                <select class="dropdown" data-type="dd" onchange="updateSummaryText()">
+                    <option value=""></option>
+                    <option value="-10">-10</option>
+                    <option value="-9">-9</option>
+                    <option value="-8">-8</option>
+                    <option value="-7">-7</option>
+                    <option value="-6">-6</option>
+                    <option value="-5">-5</option>
+                    <option value="-4">-4</option>
+                    <option value="-3">-3</option>
+                    <option value="-2">-2</option>
+                    <option value="-1">-1</option>
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
                 <button class="delete-btn">×</button>
             </div>
             <div class="checklist-item">
-                <span class="item-text" contenteditable="true">PLAN/SETUP</span>
-                <div class="three-state-button" data-state="neutral">
-                    <div class="icon icon-cross">×</div>
-                    <div class="icon icon-check">✓</div>
-                    <div class="button-overlay"></div>
-                </div>
-                <button class="delete-btn">×</button>
-            </div>
-            <div class="checklist-item">
-                <span class="item-text" contenteditable="true">WAIT</span>
-                <div class="three-state-button" data-state="neutral">
-                    <div class="icon icon-cross">×</div>
-                    <div class="icon icon-check">✓</div>
-                    <div class="button-overlay"></div>
-                </div>
-                <button class="delete-btn">×</button>
-            </div>
-            <div class="checklist-item">
-                <span class="item-text" contenteditable="true">EXECUTE</span>
-                <div class="three-state-button" data-state="neutral">
-                    <div class="icon icon-cross">×</div>
-                    <div class="icon icon-check">✓</div>
-                    <div class="button-overlay"></div>
-                </div>
-                <button class="delete-btn">×</button>
-            </div>
-            <div class="checklist-item">
-                <span class="item-text" contenteditable="true">JOURNAL</span>
-                <div class="three-state-button" data-state="neutral">
-                    <div class="icon icon-cross">×</div>
-                    <div class="icon icon-check">✓</div>
-                    <div class="button-overlay"></div>
-                </div>
+                <span class="item-text" contenteditable="true">Mood</span>
+                <select class="dropdown" data-type="dd" onchange="updateSummaryText()">
+                    <option value=""></option>
+                    <option value="-10">-10</option>
+                    <option value="-9">-9</option>
+                    <option value="-8">-8</option>
+                    <option value="-7">-7</option>
+                    <option value="-6">-6</option>
+                    <option value="-5">-5</option>
+                    <option value="-4">-4</option>
+                    <option value="-3">-3</option>
+                    <option value="-2">-2</option>
+                    <option value="-1">-1</option>
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
                 <button class="delete-btn">×</button>
             </div>
         </div>
+        
+        <div class="comments-container">
+            <textarea id="comments-input" placeholder="Comments..." maxlength="1000" rows="3"></textarea>
+        </div>
 
         <div class="add-row-buttons">
-            <button id="add-yn-btn">+ Add Yes/No Item</button>
-            <button id="add-dd-btn">+ Add Dropdown Item</button>
+            <button id="add-yn-btn"> Add Yes/No Item</button>
+            <button id="add-dd-btn"> Add Dropdown Item</button>
+            <button id="add-pn-btn"> Add -/+ Item</button>
+            <button id="add-7char-btn"> Add 7 Char Item</button>
         </div>
     </div>
 
@@ -321,13 +398,13 @@
 </div>
 
 <script>
-    // Dinamik satırlara tıklama olaylarını yöneten fonksiyon
     function handleButtonClick(event) {
         const button = event.currentTarget;
         const currentState = button.dataset.state;
         const rect = button.getBoundingClientRect();
         const clickX = event.clientX - rect.left;
         const middle = rect.width / 2;
+
         if (currentState === 'neutral') {
             if (clickX > middle) {
                 button.classList.add('checked');
@@ -342,14 +419,13 @@
         }
         updateSummaryText();
     }
-
-    // Yes/No satırı oluşturan fonksiyon
+    
     function createYNRow() {
         const newItem = document.createElement('div');
         newItem.className = 'checklist-item';
         newItem.innerHTML = `
             <span class="item-text" contenteditable="true">New Yes/No Item</span>
-            <div class="three-state-button" data-state="neutral">
+            <div class="three-state-button" data-type="yn" data-state="neutral">
                 <div class="icon icon-cross">×</div>
                 <div class="icon icon-check">✓</div>
                 <div class="button-overlay"></div>
@@ -358,21 +434,28 @@
         `;
         const checklistItems = document.getElementById('checklist-items');
         checklistItems.appendChild(newItem);
-        const newThreeStateButton = newItem.querySelector('.three-state-button');
-        newThreeStateButton.addEventListener('click', handleButtonClick);
-        const newDeleteButton = newItem.querySelector('.delete-btn');
-        newDeleteButton.addEventListener('click', handleDeleteClick);
+        newItem.querySelector('.three-state-button').addEventListener('click', handleButtonClick);
+        newItem.querySelector('.delete-btn').addEventListener('click', handleDeleteClick);
         updateSummaryText();
     }
 
-    // Dropdown satırı oluşturan fonksiyon
     function createDDRow() {
         const newItem = document.createElement('div');
         newItem.className = 'checklist-item';
         newItem.innerHTML = `
             <span class="item-text" contenteditable="true">New Dropdown Item</span>
-            <select class="dropdown" onchange="updateSummaryText()">
+            <select class="dropdown" data-type="dd" onchange="updateSummaryText()">
                 <option value=""></option>
+                <option value="-10">-10</option>
+                <option value="-9">-9</option>
+                <option value="-8">-8</option>
+                <option value="-7">-7</option>
+                <option value="-6">-6</option>
+                <option value="-5">-5</option>
+                <option value="-4">-4</option>
+                <option value="-3">-3</option>
+                <option value="-2">-2</option>
+                <option value="-1">-1</option>
                 <option value="0">0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
@@ -389,12 +472,43 @@
         `;
         const checklistItems = document.getElementById('checklist-items');
         checklistItems.appendChild(newItem);
-        const newDeleteButton = newItem.querySelector('.delete-btn');
-        newDeleteButton.addEventListener('click', handleDeleteClick);
+        newItem.querySelector('.delete-btn').addEventListener('click', handleDeleteClick);
         updateSummaryText();
     }
     
-    // Onaylı silme işlemini yöneten fonksiyon
+    function createPNRow() {
+        const newItem = document.createElement('div');
+        newItem.className = 'checklist-item';
+        newItem.innerHTML = `
+            <span class="item-text" contenteditable="true">New +/- Item</span>
+            <div class="three-state-button" data-type="pn" data-state="neutral">
+                <div class="icon icon-minus">-</div>
+                <div class="icon icon-plus">+</div>
+                <div class="button-overlay"></div>
+            </div>
+            <button class="delete-btn">×</button>
+        `;
+        const checklistItems = document.getElementById('checklist-items');
+        checklistItems.appendChild(newItem);
+        newItem.querySelector('.three-state-button').addEventListener('click', handleButtonClick);
+        newItem.querySelector('.delete-btn').addEventListener('click', handleDeleteClick);
+        updateSummaryText();
+    }
+
+    function create7CharRow() {
+        const newItem = document.createElement('div');
+        newItem.className = 'checklist-item';
+        newItem.innerHTML = `
+            <span class="item-text" contenteditable="true">New 7 Char Item</span>
+            <input type="text" class="char-input" maxlength="7" oninput="updateSummaryText()">
+            <button class="delete-btn">×</button>
+        `;
+        const checklistItems = document.getElementById('checklist-items');
+        checklistItems.appendChild(newItem);
+        newItem.querySelector('.delete-btn').addEventListener('click', handleDeleteClick);
+        updateSummaryText();
+    }
+    
     function handleDeleteClick(event) {
         const confirmDelete = confirm("Are you sure you want to delete this item?");
         if (confirmDelete) {
@@ -407,7 +521,6 @@
         updateSummaryText();
     }
     
-    // Özet metin kutusunu güncelleyen ana fonksiyon
     function updateSummaryText() {
         const summaryTextarea = document.getElementById('summary-text');
         const listItems = document.querySelectorAll('.checklist-item');
@@ -416,27 +529,31 @@
             const text = item.querySelector('.item-text').textContent;
             let value = "";
             
-            // Satır türüne göre değeri al
-            const yesNoButton = item.querySelector('.three-state-button');
+            const itemButton = item.querySelector('.three-state-button');
             const dropdown = item.querySelector('.dropdown');
+            const charInput = item.querySelector('.char-input');
 
-            if (yesNoButton) {
-                const state = yesNoButton.dataset.state;
+            if (itemButton && itemButton.dataset.type === 'yn') {
+                const state = itemButton.dataset.state;
                 if (state === 'checked') { value = "Yes"; }
                 else if (state === 'unchecked') { value = "No"; }
             } else if (dropdown) {
                 value = dropdown.value;
+            } else if (itemButton && itemButton.dataset.type === 'pn') {
+                const state = itemButton.dataset.state;
+                if (state === 'checked') { value = "+"; }
+                else if (state === 'unchecked') { value = "-"; }
+            } else if (charInput) {
+                value = charInput.value;
             }
             
             summaryContent += `${text}: ${value}\n`;
         });
         summaryTextarea.value = summaryContent;
     }
-
-    // Metin kutusunu panoya kopyalayan fonksiyon
+    
     function copyToClipboard() {
-        const summaryTextarea = document.getElementById('summary-text');
-        const listContent = summaryTextarea.value;
+        const listContent = document.getElementById('summary-text').value;
         
         const now = new Date();
         const year = now.getFullYear();
@@ -445,43 +562,45 @@
         const hour = String(now.getHours()).padStart(2, '0');
         const minute = String(now.getMinutes()).padStart(2, '0');
         const second = String(now.getSeconds()).padStart(2, '0');
-        
         const formattedDateTime = `${year}.${month}.${day} ${hour}:${minute}:${second}`;
         
-        const fullContent = `${listContent}\n${formattedDateTime}`;
+        // Assemble list content and timestamp first
+        let fullContent = `${listContent}\n${formattedDateTime}`;
+
+        const commentsText = document.getElementById('comments-input').value.trim();
+
+        // If comments exist, add them at the very end
+        if (commentsText) {
+            fullContent += `\n\nComments:\n${commentsText}`;
+        }
 
         navigator.clipboard.writeText(fullContent);
         alert("Text copied to clipboard!");
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        // Yes/No butonlarına olay dinleyicisi ekle
-        const existingThreeStateButtons = document.querySelectorAll('.three-state-button');
-        existingThreeStateButtons.forEach(button => {
+        document.querySelectorAll('.three-state-button').forEach(button => {
             button.addEventListener('click', handleButtonClick);
         });
 
-        // Dropdown menülere olay dinleyicisi ekle
-        const existingDropdowns = document.querySelectorAll('.dropdown');
-        existingDropdowns.forEach(dropdown => {
+        document.querySelectorAll('.dropdown').forEach(dropdown => {
             dropdown.addEventListener('change', updateSummaryText);
         });
 
-        // Silme butonlarına olay dinleyicisi ekle
-        const existingDeleteButtons = document.querySelectorAll('.delete-btn');
-        existingDeleteButtons.forEach(button => {
+        document.querySelectorAll('.char-input').forEach(input => {
+            input.addEventListener('input', updateSummaryText);
+        });
+
+        document.querySelectorAll('.delete-btn').forEach(button => {
             button.addEventListener('click', handleDeleteClick);
         });
 
-        // Yeni satır ekleme butonlarına olay dinleyicisi ekle
-        const addYNBtn = document.getElementById('add-yn-btn');
-        addYNBtn.addEventListener('click', createYNRow);
-        
-        const addDDBtn = document.getElementById('add-dd-btn');
-        addDDBtn.addEventListener('click', createDDRow);
-        
-        const copyBtn = document.getElementById('copy-btn');
-        copyBtn.addEventListener('click', copyToClipboard);
+        document.getElementById('add-yn-btn').addEventListener('click', createYNRow);
+        document.getElementById('add-dd-btn').addEventListener('click', createDDRow);
+        document.getElementById('add-pn-btn').addEventListener('click', createPNRow);
+        document.getElementById('add-7char-btn').addEventListener('click', create7CharRow);
+
+        document.getElementById('copy-btn').addEventListener('click', copyToClipboard);
 
         updateSummaryText();
     });
