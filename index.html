@@ -3,17 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Checklist</title>
+    <title>Trading Journal Entry</title>
     <style>
+        :root {
+            --bg-color: #f0f0f0;
+            --container-bg: #ffffff;
+            --text-color: #333;
+            --secondary-text-color: #666;
+            --border-color: #ddd;
+            --header-border-color: #000;
+            --button-bg: #3498db;
+            --button-text-color: white;
+            --button-hover-bg: #2980b9;
+            --copy-btn-bg: #34495e;
+            --copy-btn-hover-bg: #2c3e50;
+            --switch-track-bg: #ccc;
+            --checked-state-color: #2ecc71;
+            --unchecked-state-color: #e74c3c;
+            --neutral-btn-border: #ddd;
+            --icon-color: #666;
+            --delete-btn-color: #888;
+            --delete-btn-hover-color: #555;
+            --input-bg-color: #ffffff;
+        }
+
+        body.dark-mode {
+            --bg-color: #2c3e50;
+            --container-bg: #34495e;
+            --text-color: #ecf0f1;
+            --secondary-text-color: #bdc3c7;
+            --border-color: #566573;
+            --header-border-color: #ecf0f1;
+            --button-bg: #3498db;
+            --button-hover-bg: #2980b9;
+            --copy-btn-bg: #1abc9c;
+            --copy-btn-hover-bg: #16a085;
+            --switch-track-bg: #566573;
+            --checked-state-color: #27ae60;
+            --unchecked-state-color: #c0392b;
+            --neutral-btn-border: #566573;
+            --icon-color: #bdc3c7;
+            --delete-btn-color: #95a5a6;
+            --delete-btn-hover-color: #ecf0f1;
+            --input-bg-color: #2c3e50;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-color: #f0f0f0;
+            background-color: var(--bg-color);
             padding: 20px;
             box-sizing: border-box;
+            transition: background-color 0.3s;
         }
 
         .main-container {
@@ -25,18 +69,79 @@
 
         .checklist-container {
             width: 350px;
-            background-color: #ffffff;
+            background-color: var(--container-bg);
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
+            transition: background-color 0.3s;
         }
         
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--header-border-color);
+            margin-bottom: 10px;
+        }
+
+        .title-text {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 25px;
+        }
+
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--switch-track-bg);
+            transition: .4s;
+            border-radius: 25px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 19px;
+            width: 19px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #3498db;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(25px);
+        }
+
         .checklist-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 12px 0;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .checklist-item:last-child {
@@ -46,17 +151,16 @@
         .item-text {
             font-size: 1.1em;
             font-weight: bold;
-            color: #333;
+            color: var(--text-color);
             outline: none;
             cursor: pointer;
             flex-grow: 1;
         }
 
-        /* Yes/No & Plus/Minus Button styles */
         .three-state-button {
             display: flex;
             border-radius: 50px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--neutral-btn-border);
             width: 60px;
             height: 25px;
             overflow: hidden;
@@ -71,12 +175,12 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: white;
+            background-color: var(--container-bg);
             transition: background-color 0.3s;
         }
 
-        .three-state-button.checked .button-overlay { background-color: #2ecc71; }
-        .three-state-button.unchecked .button-overlay { background-color: #e74c3c; }
+        .three-state-button.checked .button-overlay { background-color: var(--checked-state-color); }
+        .three-state-button.unchecked .button-overlay { background-color: var(--unchecked-state-color); }
 
         .three-state-button .icon {
             flex: 1;
@@ -85,50 +189,40 @@
             align-items: center;
             font-size: 1.2em;
             font-weight: bold;
-            color: #666;
+            color: var(--icon-color);
             z-index: 2;
         }
         
-        .three-state-button[data-type="yn"].checked .icon-cross { opacity: 0; }
-        .three-state-button[data-type="yn"].unchecked .icon-check { opacity: 0; }
-        .three-state-button[data-type="yn"].checked .icon-check,
-        .three-state-button[data-type="yn"].unchecked .icon-cross { color: white; }
-        
+        .three-state-button[data-type="yn"].checked .icon-cross,
         .three-state-button[data-type="pn"].checked .icon-minus { opacity: 0; }
+        .three-state-button[data-type="yn"].unchecked .icon-check,
         .three-state-button[data-type="pn"].unchecked .icon-plus { opacity: 0; }
-        .three-state-button[data-type="pn"].checked .icon-plus,
-        .three-state-button[data-type="pn"].unchecked .icon-minus { color: white; }
-
-        .dropdown {
+        .three-state-button.checked .icon,
+        .three-state-button.unchecked .icon { color: white; }
+        
+        .dropdown, .char-input, #comments-input {
             margin-right: 10px;
             height: 25px;
             border-radius: 5px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color);
             font-size: 1em;
             cursor: pointer;
             outline: none;
             padding: 0 5px;
-            color: #333;
+            background-color: var(--input-bg-color);
+            color: var(--text-color);
         }
 
         .char-input {
-            margin-right: 10px;
-            height: 25px;
             width: 80px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            font-size: 1em;
-            outline: none;
-            padding: 0 5px;
             box-sizing: border-box;
-            color: #333;
             text-align: center;
         }
         
         .delete-btn {
             background: none;
             border: none;
-            color: #888;
+            color: var(--delete-btn-color);
             font-size: 1.5em;
             cursor: pointer;
             transition: color 0.2s;
@@ -139,7 +233,7 @@
             align-items: center;
         }
         .delete-btn:hover {
-            color: #555;
+            color: var(--delete-btn-hover-color);
         }
         
         .summary-container {
@@ -153,41 +247,42 @@
             height: 150px;
             padding: 10px;
             box-sizing: border-box;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color);
             border-radius: 5px;
             font-family: monospace;
             font-size: 1em;
             resize: vertical;
+            background-color: var(--input-bg-color);
+            color: var(--text-color);
         }
         #copy-btn {
             width: 100%;
             padding: 10px;
             margin-top: 10px;
-            background-color: #34495e;
-            color: white;
+            background-color: var(--copy-btn-bg);
+            color: var(--button-text-color);
             border: none;
-            border-radius: 5-px;
+            border-radius: 5px;
             cursor: pointer;
             font-size: 1em;
             font-weight: bold;
             transition: background-color 0.2s;
         }
-        #copy-btn:hover { background-color: #2c3e50; }
+        #copy-btn:hover { background-color: var(--copy-btn-hover-bg); }
         
         .comments-container {
             padding-top: 10px;
-            border-top: 1px solid #ddd;
+            border-top: 1px solid var(--border-color);
         }
 
         #comments-input {
             width: 100%;
+            height: auto;
             box-sizing: border-box;
-            border: 1px solid #ddd;
-            border-radius: 5px;
             font-family: inherit;
-            font-size: 1em;
             padding: 8px;
             resize: vertical;
+            margin-right: 0;
         }
         
         .add-row-buttons {
@@ -200,8 +295,8 @@
         .add-row-buttons button {
             flex: 1;
             padding: 10px;
-            background-color: #3498db;
-            color: white;
+            background-color: var(--button-bg);
+            color: var(--button-text-color);
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -215,7 +310,7 @@
         .add-row-buttons button:last-child {
             margin-right: 0;
         }
-        .add-row-buttons button:hover { background-color: #2980b9; }
+        .add-row-buttons button:hover { background-color: var(--button-hover-bg); }
 
         @media (max-width: 800px) {
             .main-container {
@@ -223,24 +318,15 @@
                 align-items: center;
                 gap: 20px;
             }
-
             .summary-container {
                 margin-top: 0;
                 margin-left: 0;
             }
-
             .checklist-container, .summary-container {
                 width: 90%;
             }
-
-            .add-row-buttons {
-                flex-direction: column;
-            }
-
-            .add-row-buttons button {
-                margin-right: 0;
-                margin-bottom: 10px;
-            }
+            .add-row-buttons { flex-direction: column; }
+            .add-row-buttons button { margin-right: 0; }
         }
     </style>
 </head>
@@ -248,8 +334,12 @@
 
 <div class="main-container">
     <div class="checklist-container">
-        <div style="text-align: center; font-size: 1.5em; font-weight: bold; padding-bottom: 10px; border-bottom: 2px solid #000; margin-bottom: 10px;">
-            CHECK LIST
+        <div class="header">
+            <span class="title-text">TRADING JOURNAL ENTRY</span>
+            <label class="theme-switch">
+                <input type="checkbox" id="theme-toggle">
+                <span class="slider"></span>
+            </label>
         </div>
 
         <div id="checklist-items">
@@ -398,6 +488,7 @@
 </div>
 
 <script>
+    // Functions remain the same until DOMContentLoaded
     function handleButtonClick(event) {
         const button = event.currentTarget;
         const currentState = button.dataset.state;
@@ -446,27 +537,9 @@
             <span class="item-text" contenteditable="true">New Dropdown Item</span>
             <select class="dropdown" data-type="dd" onchange="updateSummaryText()">
                 <option value=""></option>
-                <option value="-10">-10</option>
-                <option value="-9">-9</option>
-                <option value="-8">-8</option>
-                <option value="-7">-7</option>
-                <option value="-6">-6</option>
-                <option value="-5">-5</option>
-                <option value="-4">-4</option>
-                <option value="-3">-3</option>
-                <option value="-2">-2</option>
-                <option value="-1">-1</option>
+                <option value="-10">-10</option><option value="-9">-9</option><option value="-8">-8</option><option value="-7">-7</option><option value="-6">-6</option><option value="-5">-5</option><option value="-4">-4</option><option value="-3">-3</option><option value="-2">-2</option><option value="-1">-1</option>
                 <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
             </select>
             <button class="delete-btn">×</button>
         `;
@@ -528,11 +601,9 @@
         listItems.forEach(item => {
             const text = item.querySelector('.item-text').textContent;
             let value = "";
-            
             const itemButton = item.querySelector('.three-state-button');
             const dropdown = item.querySelector('.dropdown');
             const charInput = item.querySelector('.char-input');
-
             if (itemButton && itemButton.dataset.type === 'yn') {
                 const state = itemButton.dataset.state;
                 if (state === 'checked') { value = "Yes"; }
@@ -546,7 +617,6 @@
             } else if (charInput) {
                 value = charInput.value;
             }
-            
             summaryContent += `${text}: ${value}\n`;
         });
         summaryTextarea.value = summaryContent;
@@ -554,7 +624,6 @@
     
     function copyToClipboard() {
         const listContent = document.getElementById('summary-text').value;
-        
         const now = new Date();
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -563,43 +632,42 @@
         const minute = String(now.getMinutes()).padStart(2, '0');
         const second = String(now.getSeconds()).padStart(2, '0');
         const formattedDateTime = `${year}.${month}.${day} ${hour}:${minute}:${second}`;
-        
-        // Assemble list content and timestamp first
         let fullContent = `${listContent}\n${formattedDateTime}`;
-
         const commentsText = document.getElementById('comments-input').value.trim();
-
-        // If comments exist, add them at the very end
         if (commentsText) {
             fullContent += `\n\nComments:\n${commentsText}`;
         }
-
         navigator.clipboard.writeText(fullContent);
         alert("Text copied to clipboard!");
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.three-state-button').forEach(button => {
-            button.addEventListener('click', handleButtonClick);
+        // Theme switcher logic
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        themeToggle.addEventListener('change', () => {
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
         });
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.checked = true;
+        }
 
-        document.querySelectorAll('.dropdown').forEach(dropdown => {
-            dropdown.addEventListener('change', updateSummaryText);
-        });
-
-        document.querySelectorAll('.char-input').forEach(input => {
-            input.addEventListener('input', updateSummaryText);
-        });
-
-        document.querySelectorAll('.delete-btn').forEach(button => {
-            button.addEventListener('click', handleDeleteClick);
-        });
-
+        // Existing event listeners
+        document.querySelectorAll('.three-state-button').forEach(button => button.addEventListener('click', handleButtonClick));
+        document.querySelectorAll('.dropdown').forEach(dropdown => dropdown.addEventListener('change', updateSummaryText));
+        document.querySelectorAll('.char-input').forEach(input => input.addEventListener('input', updateSummaryText));
+        document.querySelectorAll('.delete-btn').forEach(button => button.addEventListener('click', handleDeleteClick));
         document.getElementById('add-yn-btn').addEventListener('click', createYNRow);
         document.getElementById('add-dd-btn').addEventListener('click', createDDRow);
         document.getElementById('add-pn-btn').addEventListener('click', createPNRow);
         document.getElementById('add-7char-btn').addEventListener('click', create7CharRow);
-
         document.getElementById('copy-btn').addEventListener('click', copyToClipboard);
 
         updateSummaryText();
