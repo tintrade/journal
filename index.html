@@ -271,7 +271,7 @@
             cursor: pointer;
             font-size: 1em;
             font-weight: bold;
-            transition: background-color 0.2s;
+            transition: background-color: 0.2s;
         }
         .summary-actions button:hover { background-color: var(--copy-btn-hover-bg); }
         
@@ -328,7 +328,10 @@
         .template-row button:hover, .template-row .file-upload-label:hover { background-color: var(--action-btn-hover-bg); }
         #delete-template-btn { background-color: var(--delete-action-btn-bg); }
         #delete-template-btn:hover { background-color: var(--delete-action-btn-hover-bg); }
-        #upload-template-input { display: none; }
+        #upload-template-input, #merge-txt-input { display: none; }
+        .full-width-label {
+            width: 100%;
+        }
 
 
         @media (max-width: 800px) {
@@ -381,6 +384,10 @@
                 <button id="download-template-btn">Download</button>
                 <label for="upload-template-input" class="file-upload-label">Load from File</label>
                 <input type="file" id="upload-template-input" accept=".json">
+            </div>
+            <div class="template-row">
+                <label for="merge-txt-input" class="file-upload-label full-width-label">Merge multiple .txt files</label>
+                <input type="file" id="merge-txt-input" accept=".txt" multiple>
             </div>
         </div>
     </div>
@@ -594,6 +601,46 @@
         event.target.value = '';
     }
     
+    function readFileAsText(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsText(file);
+        });
+    }
+
+    async function mergeTxtFiles(event) {
+        const files = event.target.files;
+        if (!files.length) return;
+
+        let allContent = [];
+        for (const file of files) {
+            try {
+                const text = await readFileAsText(file);
+                // Add filename as a header for each section
+                allContent.push(`====================\nFILE: ${file.name}\n====================\n\n${text}`);
+            } catch (err) {
+                console.error("Error reading file:", file.name, err);
+                alert(`Could not read the file: ${file.name}`);
+            }
+        }
+
+        const separator = `\n\n\n`;
+        const mergedContent = allContent.join(separator);
+        const blob = new Blob([mergedContent], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Merged_Files.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        event.target.value = ''; // Reset file input
+    }
+    
     function getFilenameTimestamp() {
         const now = new Date();
         const year = now.getFullYear();
@@ -667,7 +714,6 @@
         button.disabled = true;
 
         try {
-            // Hide elements before capture
             addButtons.style.display = 'none';
             templateManagement.style.display = 'none';
 
@@ -686,7 +732,6 @@
             console.error('Error generating image:', error);
             alert('Could not generate image. See console for details.');
         } finally {
-            // ALWAYS restore the display of the elements
             addButtons.style.display = '';
             templateManagement.style.display = '';
             button.textContent = 'Download as .png image';
@@ -773,6 +818,7 @@
         document.getElementById('delete-template-btn').addEventListener('click', deleteTemplate);
         document.getElementById('download-template-btn').addEventListener('click', downloadTemplate);
         document.getElementById('upload-template-input').addEventListener('change', uploadTemplate);
+        document.getElementById('merge-txt-input').addEventListener('change', mergeTxtFiles);
 
         // Summary action buttons
         document.getElementById('copy-btn').addEventListener('click', copyToClipboard);
